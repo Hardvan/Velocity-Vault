@@ -36,24 +36,28 @@ Every customer can leave a review for a specific car they interacted with, assig
 
 ## Relationships
 
-- One Employee belongs to one Department (One-to-One): employee.department_id references department.department_id
+### One-to-One
 
-- One Customer can have many Cars (One-to-Many): customer.customer_id references car.customer_id (optional, tracks only cars purchased by the customer)
+- **WORKS_FOR**: One Employee belongs to one Department: `employee.department_id` references `department.department_id`
 
-- One Employee can have many Appointments (One-to-Many): employee.employee_id references appointment.employee_id
+- **APPOINTMENT_FOR**: One Appointment is for one Car: `appointment.car_id` references `car.car_id`
 
-- One Customer can have many Appointments (One-to-Many): customer.customer_id references appointment.customer_id
+- **FOLLOWS**: One Test Drive is linked to one Appointment: `test_drive.appointment_id` references `appointment.appointment_id`
 
-- One Appointment is for one Car (One-to-One): appointment.car_id references car.car_id
+- **INVOLVES**: One Sale is for one Car: `sale.car_id` references `car.car_id`
 
-- One Test Drive is linked to one Appointment (One-to-One): test_drive.appointment_id references appointment.appointment_id
+- **SALE_BY**: One Sale is made by one Employee: `sale.employee_id` references `employee.employee_id`
 
-- One Sale is for one Car (One-to-One): sale.car_id references car.car_id
+- **SALE_TO**: One Sale is made to one Customer: `sale.customer_id` references `customer.customer_id`
 
-- One Sale is made by one Employee (One-to-One): sale.employee_id references employee.employee_id
+- **ASSESSES**: One Review is for one Car: `review.car_id` references `car.car_id`
 
-- One Sale is made to one Customer (One-to-One): sale.customer_id references customer.customer_id
+### One-to-Many
 
-- One Customer can write many Reviews (One-to-Many): customer.customer_id references review.customer_id
+- **OWNS**: One Customer can have many Cars: `customer.customer_id` references `car.customer_id` (optional, tracks only cars purchased by the customer)
 
-- One Review is for one Car (One-to-One): review.car_id references car.car_id
+- **HANDLES**: One Employee can have many Appointments: `employee.employee_id` references `appointment.employee_id`
+
+- **BOOKS**: One Customer can have many Appointments: `customer.customer_id` references `appointment.customer_id`
+
+- **PROVIDES**: One Customer can write many Reviews: `customer.customer_id` references `review.customer_id`
