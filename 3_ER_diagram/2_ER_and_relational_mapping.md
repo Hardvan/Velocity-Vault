@@ -79,35 +79,35 @@
 
 3. Mapping of Binary 1:N Relationship Types
 
-   - **WORKS_FOR**
+   - **WORKS_FOR**  
      **Employee**
      | <ins>emp_ID</ins> | ... | works_for_dept_id |
      | ----------------- | --- | ------- |
 
      FK: `employee.works_for_dept_id` references `department.dept_ID`
 
-   - **HANDLES**
+   - **HANDLES**  
      **Appointment**
      | <ins>app_ID</ins> | ... | handling_emp_id |
      | ----------------- | --- | ------ |
 
      FK: `appointment.handling_emp_id` references `employee.emp_ID`
 
-   - **BOOKS**
+   - **BOOKS**  
      **Appointment**
      | <ins>app_ID</ins> | ... | booking_cust_id |
      | ----------------- | --- | ----------- |
 
      FK: `appointment.booking_cust_id` references `customer.customer_ID`
 
-   - **PROVIDES**
+   - **PROVIDES**  
      **Review**
      | <ins>review_ID</ins> | ... | review_cust_id |
      | -------------------- | --- | ----------- |
 
      FK: `review.review_cust_id` references `customer.customer_ID`
 
-   - **OWNS**
+   - **OWNS**  
      **Car**
      | <ins>car_ID</ins> | ... | owner_cust_id |
      | ----------------- | --- | ----------- |
@@ -116,49 +116,49 @@
 
 4. Mapping of Binary 1:1 Relationship Types
 
-   - **MANAGES**
+   - **MANAGES**  
      **Department**
      | <ins>dept_ID</ins> | ... | manager_emp_id |
      | ------------------ | --- | -------------- |
 
      FK: `department.manager_emp_id` references `employee.emp_ID`
 
-   - **ASSESSES**
+   - **ASSESSES**  
      **Review**
      | <ins>review_ID</ins> | ... | assessed_car_id |
      | -------------------- | --- | --------------- |
 
      FK: `review.assessed_car_id` references `car.car_ID`
 
-   - **SALE_TO**
+   - **SALE_TO**  
      **Sale**
      | <ins>sale_ID</ins> | ... | sale_to_cust_id |
      | ------------------ | --- | --------------- |
 
      FK: `sale.sale_to_cust_id` references `customer.customer_ID`
 
-   - **SALE_BY**
+   - **SALE_BY**  
      **Sale**
      | <ins>sale_ID</ins> | ... | sale_by_emp_id |
      | ------------------ | --- | -------------- |
 
      FK: `sale.sale_by_emp_id` references `employee.emp_ID`
 
-   - **APPOINTMENT_FOR**
+   - **APPOINTMENT_FOR**  
      **Appointment**
      | <ins>app_ID</ins> | ... | appointment_for_car_id |
      | ----------------- | --- | ---------------------- |
 
      FK: `appointment.appointment_for_car_id` references `car.car_ID`
 
-   - **FOLLOWS**
+   - **FOLLOWS**  
      Merge **Appointment** and **Test Drive** tables since they are both total participation
      | <ins>app_ID</ins> | ... | test_drive_ID | ... |
      | ----------------- | --- | ------------- | --- |
 
      **Test Drive** table is deleted since it is merged with **Appointment** table.
 
-   - **INVOLVES**
+   - **INVOLVES**  
      **Sale**
      | <ins>sale_ID</ins> | ... | sale_involved_car_id |
      | ----------------- | --- | --------------------- |
@@ -171,12 +171,12 @@
 
 6. Mapping of Multivalued Attributes
 
-   - For **Car**, the multivalued attribute **Listed_Features** is mapped to a separate table **Car_Features** with the following schema:
+   - For **Car**, the multivalued attribute **Listed_Features** is mapped to a separate table **Car_Features** with the following schema:  
      **Car_Features**
      | <ins>feature</ins> | <ins>car_ID</ins> |
      | ------------------ | ----------------- |
 
-     PK: (feature, car_ID)
+     PK: (feature, car_ID)  
      FK: `car_features.car_ID` references `car.car_ID`
 
 7. Mapping of N-ary Relationship Types
@@ -190,7 +190,7 @@
 | <ins>emp_ID</ins> | Name | Age | Gender | Salary | works_for_dept_id |
 | ----------------- | ---- | --- | ------ | ------ | ----------------- |
 
-PK: emp_ID
+PK: emp_ID  
 FK: `employee.works_for_dept_id` references `department.dept_ID`
 
 ### Department
@@ -198,7 +198,7 @@ FK: `employee.works_for_dept_id` references `department.dept_ID`
 | <ins>dept_ID</ins> | Name | manager_emp_id |
 | ------------------ | ---- | -------------- |
 
-PK: dept_ID
+PK: dept_ID  
 FK: `department.manager_emp_id` references `employee.emp_ID`
 
 ### Appointment
@@ -206,9 +206,9 @@ FK: `department.manager_emp_id` references `employee.emp_ID`
 | <ins>app_ID</ins> | Date | Time | Status | handling_emp_id | booking_cust_id | appointment_for_car_id | test_drive_ID | customer_feedback |
 | ----------------- | ---- | ---- | ------ | --------------- | --------------- | ---------------------- | ------------- | ----------------- |
 
-PK: app_ID
-FK: `appointment.handling_emp_id` references `employee.emp_ID`
-FK: `appointment.booking_cust_id` references `customer.customer_ID`
+PK: app_ID  
+FK: `appointment.handling_emp_id` references `employee.emp_ID`  
+FK: `appointment.booking_cust_id` references `customer.customer_ID`  
 FK: `appointment.appointment_for_car_id` references `car.car_ID`
 
 ### Review
@@ -216,8 +216,8 @@ FK: `appointment.appointment_for_car_id` references `car.car_ID`
 | <ins>review_ID</ins> | Star_Rating | User_Review | review_cust_id | assessed_car_id |
 | -------------------- | ----------- | ----------- | -------------- | --------------- |
 
-PK: review_ID
-FK: `review.review_cust_id` references `customer.customer_ID`
+PK: review_ID  
+FK: `review.review_cust_id` references `customer.customer_ID`  
 FK: `review.assessed_car_id` references `car.car_ID`
 
 ### Sale
@@ -225,9 +225,9 @@ FK: `review.assessed_car_id` references `car.car_ID`
 | <ins>sale_ID</ins> | sale_date | final_price | payment_method | other_finance_details | sale_to_cust_id | sale_by_emp_id | sale_involved_car_id |
 | ------------------ | --------- | ----------- | -------------- | --------------------- | --------------- | -------------- | -------------------- |
 
-PK: sale_ID
-FK: `sale.sale_to_cust_id` references `customer.customer_ID`
-FK: `sale.sale_by_emp_id` references `employee.emp_ID`
+PK: sale_ID  
+FK: `sale.sale_to_cust_id` references `customer.customer_ID`  
+FK: `sale.sale_by_emp_id` references `employee.emp_ID`  
 FK: `sale.sale_involved_car_id` references `car.car_ID`
 
 ### Customer
@@ -242,7 +242,7 @@ PK: customer_ID
 | <ins>car_ID</ins> | Model | Engine | Make | Inventory_Status | Sale_Price | maufacture_year | Mileage_covered | owner_cust_id |
 | ----------------- | ----- | ------ | ---- | ---------------- | ---------- | --------------- | --------------- | ------------- |
 
-PK: car_ID
+PK: car_ID  
 FK: `car.owner_cust_id` references `customer.customer_ID`
 
 ### Car_Features
@@ -250,5 +250,5 @@ FK: `car.owner_cust_id` references `customer.customer_ID`
 | <ins>feature</ins> | <ins>car_ID</ins> |
 | ------------------ | ----------------- |
 
-PK: (feature, car_ID)
+PK: (feature, car_ID)  
 FK: `car_features.car_ID` references `car.car_ID`
