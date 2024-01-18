@@ -2,7 +2,7 @@
 
 ## ER Diagram
 
-![ER Diagram](./er%20snapshot.png)
+![ER Diagram](./er-diagram-modified.png)
 
 ### Entities Present
 
@@ -56,8 +56,10 @@
      | -------------------- | ----------- | ----------- |
 
    - **Sale**
-     | <ins>sale_ID</ins> | sale_date | final_price | payment_method | other_finance_details |
-     | ------------------ | --------- | ----------- | -------------- | --------------------- |
+     | <ins>sale_ID</ins> | sale_date | final_price | payment_method |
+     | ------------------ | --------- | ----------- | -------------- |
+
+     (other_finance_details is a multivalued attribute)
 
    - **Customer**
      | <ins>customer_ID</ins> | Name | Age | Phone | Email | Registration_Date |
@@ -179,6 +181,14 @@
      PK: (feature, car_ID)  
      FK: `car_features.car_ID` references `car.car_ID`
 
+   - For **Sale**, the multivalued attribute **other_finance_details** is mapped to a separate table **Sale_Finance_Details** with the following schema:  
+     **Sale_Finance_Details**
+     | <ins>finance_detail</ins> | <ins>sale_ID</ins> |
+     | ------------------------- | ------------------ |
+
+     PK: (finance_detail, sale_ID)  
+     FK: `sale_finance_details.sale_ID` references `sale.sale_ID`
+
 7. Mapping of N-ary Relationship Types
 
    **None**
@@ -222,8 +232,8 @@ FK: `review.assessed_car_id` references `car.car_ID`
 
 ### Sale
 
-| <ins>sale_ID</ins> | sale_date | final_price | payment_method | other_finance_details | sale_to_cust_id | sale_by_emp_id | sale_involved_car_id |
-| ------------------ | --------- | ----------- | -------------- | --------------------- | --------------- | -------------- | -------------------- |
+| <ins>sale_ID</ins> | sale_date | final_price | payment_method | sale_to_cust_id | sale_by_emp_id | sale_involved_car_id |
+| ------------------ | --------- | ----------- | -------------- | --------------- | -------------- | -------------------- |
 
 PK: sale_ID  
 FK: `sale.sale_to_cust_id` references `customer.customer_ID`  
@@ -252,3 +262,11 @@ FK: `car.owner_cust_id` references `customer.customer_ID`
 
 PK: (feature, car_ID)  
 FK: `car_features.car_ID` references `car.car_ID`
+
+### Sale_Finance_Details
+
+| <ins>finance_detail</ins> | <ins>sale_ID</ins> |
+| ------------------------- | ------------------ |
+
+PK: (finance_detail, sale_ID)  
+FK: `sale_finance_details.sale_ID` references `sale.sale_ID`
