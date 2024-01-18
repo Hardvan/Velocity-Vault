@@ -4,7 +4,7 @@
 
 ![ER Diagram](./er-diagram-modified.png)
 
-### Entities Present
+### Entity Types Present
 
 - **Employee**
 - **Department**
