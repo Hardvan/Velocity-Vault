@@ -34,7 +34,9 @@ def save_qr_code(employee_id, folder='QR_ID'):
 
     # Add caption text
     draw = ImageDraw.Draw(img_with_caption)
-    font = ImageFont.load_default()
+    font_path = "./fonts/Roboto-Regular.ttf"
+    font_size = 15
+    font = ImageFont.truetype(font_path, font_size)
     caption = f"Employee ID: {employee_id}"
     text_width = draw.textlength(caption, font)
     draw.text(((qr_img.size[0] - text_width) / 2, qr_img.size[1] + 10),
