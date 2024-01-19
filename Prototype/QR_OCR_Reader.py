@@ -24,7 +24,7 @@ if __name__ == "__main__":
 
     # Example usage
     import time
-    qr_image_path = "./QR_ID/bob_M@30_50k_7872.png"
+    qr_image_path = "./QR_ID/bob_M@30_50k_1683.png"
 
     # Display the input image
     print("Press q to close the image")
