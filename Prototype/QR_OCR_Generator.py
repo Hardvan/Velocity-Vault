@@ -5,11 +5,9 @@ import os
 
 
 def generate_employee_id(name, age, gender, salary):
-
     # Generate id from attributes + 4 digit random number
     gender = 'M' if gender.lower() == 'male' else 'F'
     employee_id = f"{name}_{gender}@{age}_{salary/1000:.0f}k_{random.randint(1000, 9999)}"
-
     return employee_id
 
 
@@ -27,12 +25,12 @@ def save_qr_code(employee_id, folder='QR_ID'):
     )
     qr.add_data(employee_id)
     qr.make(fit=True)
-    qr_img = qr.make_image(fill_color="black", back_color="white")
+    qr_img = qr.make_image(fill_color="green", back_color="white")
 
     # Create image with caption
     img_with_caption = Image.new(
         'RGB', (qr_img.size[0], qr_img.size[1] + 50), color='white')
-    img_with_caption.paste(qr_img, (0, 0))
+    img_with_caption.paste(qr_img, (0, 20))  # Move QR code down by 10 pixels
 
     # Add caption text
     draw = ImageDraw.Draw(img_with_caption)
@@ -50,13 +48,13 @@ def save_qr_code(employee_id, folder='QR_ID'):
     img_with_borders = ImageOps.expand(
         img_with_borders, border=spacing, fill='white')
 
-    # Add central employee logo (you can replace this with your logo)
+    # Add employee logo to the top
     logo_path = "./static/images/emp_logo.png"
     if os.path.exists(logo_path):
         logo = Image.open(logo_path)
         logo = logo.resize((50, 50))  # Adjust the size as needed
         img_with_borders.paste(
-            logo, (img_with_borders.width//2 - 25, img_with_borders.height//2 - 25))
+            logo, ((img_with_borders.width - logo.width) // 2, spacing))
 
     # Save image
     image_path = f"{folder}/{employee_id}.png"
