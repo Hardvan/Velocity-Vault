@@ -1,6 +1,6 @@
 import random
 import qrcode
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageOps
 import os
 
 
@@ -42,9 +42,25 @@ def save_qr_code(employee_id, folder='QR_ID'):
     draw.text(((qr_img.size[0] - text_width) / 2, qr_img.size[1] + 10),
               caption, fill="black", font=font)
 
+    # Add borders with spacing
+    border_width = 3
+    spacing = 10
+    img_with_borders = ImageOps.expand(
+        img_with_caption, border=border_width, fill='blue')
+    img_with_borders = ImageOps.expand(
+        img_with_borders, border=spacing, fill='white')
+
+    # Add central employee logo (you can replace this with your logo)
+    logo_path = "./static/images/emp_logo.png"
+    if os.path.exists(logo_path):
+        logo = Image.open(logo_path)
+        logo = logo.resize((50, 50))  # Adjust the size as needed
+        img_with_borders.paste(
+            logo, (img_with_borders.width//2 - 25, img_with_borders.height//2 - 25))
+
     # Save image
     image_path = f"{folder}/{employee_id}.png"
-    img_with_caption.save(image_path)
+    img_with_borders.save(image_path)
     print("✅ Saved QR code to:", image_path)
 
 
