@@ -7,7 +7,7 @@ import os
 def generate_employee_id(name, age, gender, salary):
     # Generate id from attributes + 4 digit random number
     gender = 'M' if gender.lower() == 'male' else 'F'
-    employee_id = f"{name}_{gender}@{age}_{salary/1000:.0f}k_{random.randint(1000, 9999)}"
+    employee_id = f"{name.lower()}_{gender}@{age}_{salary/1000:.0f}k_{random.randint(1000, 9999)}"
     return employee_id
 
 
