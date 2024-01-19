@@ -41,7 +41,8 @@ def read_employee_id(image_path):
 if __name__ == "__main__":
 
     # Example usage
-    qr_image_path = "./QR_ID/bob_M@30_50k_4023.png"
+    import time
+    qr_image_path = "./QR_ID/bob_M@30_50k_9660.png"
 
     # Display the input image
     img = mpimg.imread(qr_image_path)
@@ -50,12 +51,18 @@ if __name__ == "__main__":
     plt.show()
 
     # Read QR code data
+    start_time = time.time()
     qr_code_data = read_qr_code(qr_image_path)
+    elapsed_time = (time.time() - start_time) * 1000
     print("QR Code Data:", qr_code_data)
+    print(f"Time taken to read QR code: {elapsed_time:.2f} ms")
 
     # Read Employee ID using OCR
+    start_time = time.time()
     employee_id = read_employee_id(qr_image_path)
-    print("Employee ID (OCR):", employee_id)
+    elapsed_time = (time.time() - start_time) * 1000
+    print("\nEmployee ID (OCR):", employee_id)
+    print(f"Time taken to read Employee ID: {elapsed_time:.2f} ms")
 
     # Check if the QR code data and OCR results match
     if qr_code_data == employee_id:
