@@ -2,7 +2,6 @@ import random
 import qrcode
 from PIL import Image, ImageDraw, ImageFont, ImageOps
 import os
-from fpdf import FPDF
 
 
 def generate_employee_id(name, age, gender, salary):
@@ -67,32 +66,6 @@ def save_qr_code(employee_id, folder='QR_ID'):
     print("✅ Saved QR code to:", image_path)
 
 
-def save_ocr_pdf(employee_id, name, age, gender, salary):
-
-    # Create OCR_PDF folder if it doesn't exist
-    os.makedirs("OCR_PDF", exist_ok=True)
-
-    # Create PDF
-    pdf = FPDF()
-    pdf.add_page()
-    pdf.set_font("Times", size=12)
-
-    # Set the heading of the PDF as Employee ID
-    pdf.cell(200, 10, txt=employee_id, ln=True, align='C')
-
-    # Add employee attributes & values
-    attributes = ["Name", "Age", "Gender", "Salary"]
-    values = [name, str(age), gender, f"${salary:,}"]
-
-    for attribute, value in zip(attributes, values):
-        pdf.cell(200, 10, txt=f"{attribute}: {value}", ln=True, align='L')
-
-    # Save the PDF
-    pdf_output_path = f"OCR_PDF/{employee_id}.pdf"
-    pdf.output(pdf_output_path)
-    print("✅ Saved OCR PDF to:", pdf_output_path)
-
-
 if __name__ == "__main__":
 
     # Example usage
@@ -105,4 +78,3 @@ if __name__ == "__main__":
     print("Generated Employee ID:", employee_id)
 
     save_qr_code(employee_id)
-    save_ocr_pdf(employee_id, name, age, gender, salary)
