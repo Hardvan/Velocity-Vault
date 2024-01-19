@@ -49,12 +49,14 @@ def save_qr_code(employee_id, folder='QR_ID'):
         img_with_borders, border=spacing, fill='white')
 
     # Offset the employee logo by 5 pixels from the top
-    logo_path = "./static/images/emp_logo.png"
+    logo_path = "./static/images/emp_logo2.jpg"
     if os.path.exists(logo_path):
         logo = Image.open(logo_path)
         logo = logo.resize((50, 50))  # Adjust the size as needed
         img_with_borders.paste(
             logo, ((img_with_borders.width - logo.width) // 2, spacing + 7))
+    else:
+        raise FileNotFoundError("Employee logo not found!")
 
     # Save image
     image_path = f"{folder}/{employee_id}.png"
