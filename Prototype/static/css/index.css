@@ -1,0 +1,19 @@
+html {
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  padding: 0;
+  margin: 0;
+}
+
+/* Disable vertical scrollbar */
+::-webkit-scrollbar {
+  display: none;
+}
+
+.title {
+  font-size: 3rem;
+  text-align: center;
+}
