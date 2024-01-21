@@ -8,7 +8,15 @@ import matplotlib.image as mpimg
 logging.getLogger('easyocr').setLevel(logging.ERROR)
 
 
-def read_qr_code(image_path):
+def read_qr_code(image_path, show_image=False):
+
+    # Display the input image
+    if show_image:
+        print("Press q to close the image")
+        img = mpimg.imread(image_path)
+        imgplot = plt.imshow(img)
+        plt.title('Input Image')
+        plt.show()
 
     # Read QR code data from the image
     qr_data = ""
@@ -22,22 +30,35 @@ def read_qr_code(image_path):
 
 if __name__ == "__main__":
 
-    # Example usage
     import time
-    qr_image_path = "./QR_ID/bob_M@30_50k_1683.png"
 
-    # Display the input image
-    print("Press q to close the image")
-    img = mpimg.imread(qr_image_path)
-    imgplot = plt.imshow(img)
-    plt.title('Input Image')
-    plt.show()
+    # Example usage
+    def test_employee():
 
-    # Read QR code data
-    start_time = time.time()
-    qr_code_data = read_qr_code(qr_image_path)
-    elapsed_time = (time.time() - start_time) * 1000
-    print("QR Code Data:", qr_code_data)
-    print(f"Time taken to read QR code: {elapsed_time:.2f} ms")
+        print("Employee QR code reading")
+        qr_image_path = "./QR_ID_Employee/bob_M_30_50k_9151.png"
 
-    # OCR is not reliable to read the employee ID caption text in the QR code
+        # Read QR code data
+        start_time = time.time()
+        qr_code_data = read_qr_code(qr_image_path, show_image=True)
+        elapsed_time = (time.time() - start_time)
+        print("QR Code Data for Employee:", qr_code_data)
+        print(f"Time taken to read QR code: {elapsed_time:.2f} s")
+
+    def test_customer():
+
+        print("Customer QR code reading")
+        qr_image_path = "./QR_ID_Customer/charlie_3210_2757.png"
+
+        # Read QR code data
+        start_time = time.time()
+        qr_code_data = read_qr_code(qr_image_path, show_image=True)
+        elapsed_time = (time.time() - start_time)
+        print("QR Code Data for Customer:", qr_code_data)
+        print(f"Time taken to read QR code: {elapsed_time:.2f} s")
+
+    test_employee()
+    print("\n============================================\n")
+    test_customer()
+
+    # ! OCR is not reliable to read the user ID caption text in the QR code

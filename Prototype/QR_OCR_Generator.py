@@ -8,18 +8,31 @@ def generate_employee_id(name, age, gender, salary):
 
     # ID format: name_gender@age_salaryk_random4digits
     gender = 'M' if gender.lower() == 'male' else 'F'
-    employee_id = f"{name.lower()}_{gender}@{age}_{salary/1000:.0f}k_{random.randint(1000, 9999)}"
+    employee_id = f"{name.lower()}_{gender}_{age}_{salary/1000:.0f}k_{random.randint(1000, 9999)}"
     return employee_id
 
 
 def generate_customer_id(name, age, phone):
 
     # ID format: name_age@phonelast4digits_random4digits
-    customer_id = f"{name.lower()}_{age}@{phone[-4:]}_{random.randint(1000, 9999)}"
+    customer_id = f"{name.lower()}_{phone[-4:]}_{random.randint(1000, 9999)}"
     return customer_id
 
 
 def save_qr_code(user_id, user, folder='QR_ID'):
+    """Generates a QR code with the given user ID and saves it to the specified folder.
+
+    Args:
+        user_id (str): The user ID to be encoded in the QR code.
+        user (str): The type of user. Either 'E' for employee or 'C' for customer.
+        folder (str, optional): The folder to save the QR code to. Defaults to 'QR_ID'.
+
+    Returns:
+        None
+
+    Raises:
+        FileNotFoundError: If the logo for the user is not found.
+    """
 
     # Create folder if it doesn't exist
     os.makedirs(folder, exist_ok=True)
@@ -33,8 +46,7 @@ def save_qr_code(user_id, user, folder='QR_ID'):
     )
     qr.add_data(user_id)
     qr.make(fit=True)
-    qr_img = qr.make_image(fill_color="green" if user == 'E' else "blue",
-                           back_color="white")
+    qr_img = qr.make_image(fill_color="black", back_color="white")
 
     # Create image with caption
     img_with_caption = Image.new(
