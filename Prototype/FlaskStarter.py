@@ -118,7 +118,7 @@ print("✅ Virtual environment created")
 
 # Create the batch file
 batch_content = '''@echo off
-call .\.venv\Scripts\activate
+call .\.venv\Scripts\\activate
 pip install Flask
 pip freeze > requirements.txt
 python app.py
