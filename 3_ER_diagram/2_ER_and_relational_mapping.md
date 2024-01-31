@@ -23,7 +23,7 @@
 - **HANDLES**: Employee & Appointment (1:N)
 - **BOOKS**: Customer & Appointment (1:N)
 - **PROVIDES**: Customer & Review (1:N)
-- **OWNS**: Customer & Car (1:N)
+- **OWNS**: Customer & Car (1:N) (partial: customer, partial: car)
 
 #### One-to-One
 
@@ -110,11 +110,13 @@
      FK: `review.review_cust_id` references `customer.customer_ID`
 
    - **OWNS**  
-     **Car**
-     | <ins>car_ID</ins> | ... | owner_cust_id |
-     | ----------------- | --- | ----------- |
+      Make a new table **Car_Ownership** with the following schema:
+     | <ins>owner_cust_id</ins> | <ins>owned_car_id</ins> |
+     | ------------------------ | ----------------------- |
 
-     FK: `car.owner_cust_id` references `customer.customer_ID`
+     PK: (owner_cust_id, owned_car_id)  
+     FK: `car_ownership.owner_cust_id` references `customer.customer_ID`  
+     FK: `car_ownership.owned_car_id` references `car.car_ID`
 
 4. Mapping of Binary 1:1 Relationship Types
 
@@ -249,11 +251,20 @@ PK: customer_ID
 
 ### Car
 
-| <ins>car_ID</ins> | Model | Engine | Make | Inventory_Status | Sale_Price | maufacture_year | Mileage_covered | owner_cust_id |
-| ----------------- | ----- | ------ | ---- | ---------------- | ---------- | --------------- | --------------- | ------------- |
+| <ins>car_ID</ins> | Model | Engine | Make | Inventory_Status | Sale_Price | maufacture_year | Mileage_covered |
+| ----------------- | ----- | ------ | ---- | ---------------- | ---------- | --------------- | --------------- |
 
 PK: car_ID  
 FK: `car.owner_cust_id` references `customer.customer_ID`
+
+### Car_Ownership
+
+| <ins>owner_cust_id</ins> | <ins>owned_car_id</ins> |
+| ------------------------ | ----------------------- |
+
+PK: (owner_cust_id, owned_car_id)  
+FK: `car_ownership.owner_cust_id` references `customer.customer_ID`  
+FK: `car_ownership.owned_car_id` references `car.car_ID`
 
 ### Car_Features
 
