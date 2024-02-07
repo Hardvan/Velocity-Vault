@@ -52,13 +52,32 @@ if TEST_CONNECTION:
     print("✅ Deleted the sample document.")
 
 
+def save_qr_image(base64_img, image_path):
+    """Saves the base64 image to a file.
+
+    Args:
+        base64_img (str): The base64 image.
+        image_path (str): The path to save the image.
+    """
+
+    # Convert the base64 image to bytes
+    img_bytes = base64.b64decode(base64_img)
+
+    # Save the image to a file
+    with open(image_path, "wb") as img_file:
+        img_file.write(img_bytes)
+    print(f"✅ Saved the QR code to: {image_path}")
+
+
+# ? Routes
+
 @app.route('/')
 def index():
     return render_template("index.html")
 
 
-# CRUD operations for the QR codes
-# Create
+# ? CRUD operations for the QR codes
+# * Create
 def add_qr_code(user_id, image_path, user):
     """Converts the image into base64 and adds a new QR code to the collection "qr_codes".
 
@@ -80,7 +99,7 @@ def add_qr_code(user_id, image_path, user):
     print(f"✅ Added a new QR code for {user} with user ID: {user_id}")
 
 
-# Read
+# * Read
 def get_qr_code(user_id):
     """Retrieves the QR code from the collection "qr_codes".
 
@@ -98,7 +117,7 @@ def get_qr_code(user_id):
     return qr_code
 
 
-# Update
+# * Update
 def update_qr_code(user_id, image_path):
     """Converts the image into base64 and updates the QR code in the collection "qr_codes".
 
@@ -117,7 +136,7 @@ def update_qr_code(user_id, image_path):
     print(f"✅ Updated the QR code for user ID: {user_id}")
 
 
-# Delete
+# * Delete
 def delete_qr_code(user_id):
     """Deletes the QR code from the collection "qr_codes".
 
@@ -130,24 +149,7 @@ def delete_qr_code(user_id):
     print(f"✅ Deleted the QR code for user ID: {user_id}")
 
 
-def save_qr_image(base64_img, image_path):
-    """Saves the base64 image to a file.
-
-    Args:
-        base64_img (str): The base64 image.
-        image_path (str): The path to save the image.
-    """
-
-    # Convert the base64 image to bytes
-    img_bytes = base64.b64decode(base64_img)
-
-    # Save the image to a file
-    with open(image_path, "wb") as img_file:
-        img_file.write(img_bytes)
-    print(f"✅ Saved the QR code to: {image_path}")
-
-
-def test_crud_qr_code():
+if TEST_CRUD_QR_CODE:
 
     user_id = 'charlie_3210_2757'
     image_path = './QR_ID_Customer/charlie_3210_2757.png'
@@ -167,10 +169,6 @@ def test_crud_qr_code():
 
     # Delete
     delete_qr_code(user_id)
-
-
-if TEST_CRUD_QR_CODE:
-    test_crud_qr_code()
 
 
 if __name__ == "__main__":
