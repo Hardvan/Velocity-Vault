@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>PHPJabbers.com | Free Car Dealer Website Template</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, user-scalable=no"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static',filename='bootstrap/css/bootstrap.min.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static',filename='css/main.css') }}"
+    />
+    <noscript
+      ><link
+        rel="stylesheet"
+        href="{{ url_for('static',filename='css/noscript.css') }}"
+    /></noscript>
+  </head>
+  <body class="is-preload" style="background-color: rgb(29, 27, 27)">
+    <!-- Wrapper -->
+    <div id="wrapper">
+      <!-- Header -->
+      <header id="header" class="alt">
+        <a href="index.html" class="logo"
+          ><strong>Car Dealer</strong> <span>Website</span></a
+        >
+        <nav>
+          <a href="#menu">Menu</a>
+        </nav>
+      </header>
+
+      <!-- Menu -->
+      <nav id="menu">
+        <ul class="links">
+          <li><a href="index.html">Home </a></li>
+
+          <li class="active"><a href="cars.html">Cars</a></li>
+
+          <li><a href="about-us.html">About Us</a></li>
+
+          <li><a href="blog.html">Blog</a></li>
+
+          <li><a href="contact.html">Contact Us</a></li>
+
+          <li class="dropdown">
+            <a
+              class="nav-link dropdown-toggle"
+              data-toggle="dropdown"
+              href="#"
+              role="button"
+              aria-haspopup="true"
+              aria-expanded="false"
+              >More</a
+            >
+
+            <ul class="dropdown-menu">
+              <li><a href="team.html">Team</a></li>
+              <li><a href="testimonials.html">Testimonials</a></li>
+              <li><a href="faq.html">FAQ</a></li>
+              <li><a href="terms.html">Terms</a></li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Main -->
+      <div id="main" class="alt">
+        <!-- One -->
+        <section id="one">
+          <div class="inner">
+            <header class="major">
+              <h1>Cars</h1>
+            </header>
+          </div>
+        </section>
+
+        <section>
+          <div class="inner">
+            <form method="post" action="#">
+              <div class="fields">
+                <div class="field quarter">
+                  <label>Used/New:</label>
+
+                  <select>
+                    <option value="">All</option>
+                    <option value="new">New vehicle</option>
+                    <option value="used">Used vehicle</option>
+                  </select>
+                </div>
+
+                <div class="field quarter">
+                  <label>Vehicle Type:</label>
+
+                  <select>
+                    <option value="">--All --</option>
+                    <option value="">--All --</option>
+                    <option value="">--All --</option>
+                    <option value="">--All --</option>
+                    <option value="">--All --</option>
+                  </select>
+                </div>
+
+                <div class="field quarter">
+                  <label>Make:</label>
+
+                  <select>
+                    <option value="">-- All --</option>
+                    <option value="">-- All --</option>
+                    <option value="">-- All --</option>
+                    <option value="">-- All --</option>
+                    <option value="">-- All --</option>
+                    <option value="">-- All --</option>
+                    <option value="">-- All --</option>
+                  </select>
+                </div>
+
+                <div class="field quarter">
+                  <label>Model:</label>
+
+                  <select>
+                    <option value="">-- All --</option>
+                    <option value="">-- All --</option>
+                    <option value="">-- All --</option>
+                    <option value="">-- All --</option>
+                  </select>
+                </div>
+
+                <div class="field quarter">
+                  <label>Price:</label>
+
+                  <select>
+                    <option value="">-- All --</option>
+                    <option value="">-- All --</option>
+                    <option value="">-- All --</option>
+                    <option value="">-- All --</option>
+                  </select>
+                </div>
+
+                <div class="field quarter">
+                  <label>Mileage:</label>
+
+                  <select>
+                    <option value="">-- All --</option>
+                    <option value="">-- All --</option>
+                    <option value="">-- All --</option>
+                    <option value="">-- All --</option>
+                  </select>
+                </div>
+
+                <div class="field quarter">
+                  <label>Engine size:</label>
+
+                  <select>
+                    <option value="">-- All --</option>
+                    <option value="">-- All --</option>
+                    <option value="">-- All --</option>
+                    <option value="">-- All --</option>
+                  </select>
+                </div>
+
+                <div class="field quarter">
+                  <label>Power:</label>
+
+                  <select>
+                    <option value="">-- All --</option>
+                    <option value="">-- All --</option>
+                    <option value="">-- All --</option>
+                    <option value="">-- All --</option>
+                  </select>
+                </div>
+
+                <div class="field quarter">
+                  <label>Fuel:</label>
+
+                  <select>
+                    <option value="">-- All --</option>
+                    <option value="">-- All --</option>
+                    <option value="">-- All --</option>
+                    <option value="">-- All --</option>
+                  </select>
+                </div>
+
+                <div class="field quarter">
+                  <label>Gearbox:</label>
+
+                  <select>
+                    <option value="">-- All --</option>
+                    <option value="">-- All --</option>
+                    <option value="">-- All --</option>
+                    <option value="">-- All --</option>
+                  </select>
+                </div>
+
+                <div class="field quarter">
+                  <label>Doors:</label>
+
+                  <select>
+                    <option value="">-- All --</option>
+                    <option value="">-- All --</option>
+                    <option value="">-- All --</option>
+                    <option value="">-- All --</option>
+                  </select>
+                </div>
+
+                <div class="field quarter">
+                  <label>Number of seats:</label>
+
+                  <select>
+                    <option value="">-- All --</option>
+                    <option value="">-- All --</option>
+                    <option value="">-- All --</option>
+                    <option value="">-- All --</option>
+                  </select>
+                </div>
+
+                <div class="field half text-right">
+                  <ul class="actions">
+                    <li>
+                      <input type="submit" value="Search" class="primary" />
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </form>
+          </div>
+        </section>
+
+        <!-- Featured Cars -->
+        <section class="tiles">
+          <article
+            style="
+              background-image: url('/static/images/product-1-720x480.jpg');
+            "
+          >
+            <span class="image">
+              <img
+                src="{{ url_for('static', filename = 'images/product-1-720x480.jpg') }}"
+                alt=""
+              />
+            </span>
+
+            <header class="major">
+              <p>
+                <i class="fa fa-dashboard"></i> 130 000km &nbsp;&nbsp;
+                <i class="fa fa-cube"></i> 1800cc&nbsp;&nbsp;
+                <i class="fa fa-cog"></i> Manual
+              </p>
+
+              <h3>Lorem ipsum dolor sit amet, consectetur</h3>
+
+              <p><del>$11199.00</del> <strong> $11179.00</strong></p>
+
+              <p>190 hp / Petrol / 2008 / Used vehicle</p>
+
+              <div class="major-actions">
+                <a href="car-details.html" class="button small next"
+                  >View Car</a
+                >
+              </div>
+            </header>
+          </article>
+
+          <article
+            style="
+              background-image: url('/static/images/product-2-720x480.jpg');
+            "
+          >
+            <span class="image">
+              <img
+                src="{{ url_for('static', filename = 'images/product-2-720x480.jpg') }}"
+                alt=""
+              />
+            </span>
+
+            <header class="major">
+              <p>
+                <i class="fa fa-dashboard"></i> 130 000km &nbsp;&nbsp;
+                <i class="fa fa-cube"></i> 1800cc&nbsp;&nbsp;
+                <i class="fa fa-cog"></i> Manual
+              </p>
+
+              <h3>Lorem ipsum dolor sit amet, consectetur</h3>
+
+              <p><del>$11199.00</del> <strong> $11179.00</strong></p>
+
+              <p>190 hp / Petrol / 2008 / Used vehicle</p>
+
+              <div class="major-actions">
+                <a href="car-details.html" class="button small next"
+                  >View Car</a
+                >
+              </div>
+            </header>
+          </article>
+
+          <article
+            style="
+              background-image: url('/static/images/product-3-720x480.jpg');
+            "
+          >
+            <span class="image">
+              <img
+                src="{{ url_for('static', filename = 'images/product-3-720x480.jpg') }}"
+                alt=""
+              />
+            </span>
+
+            <header class="major">
+              <p>
+                <i class="fa fa-dashboard"></i> 130 000km &nbsp;&nbsp;
+                <i class="fa fa-cube"></i> 1800cc&nbsp;&nbsp;
+                <i class="fa fa-cog"></i> Manual
+              </p>
+
+              <h3>Lorem ipsum dolor sit amet, consectetur</h3>
+
+              <p><del>$11199.00</del> <strong> $11179.00</strong></p>
+
+              <p>190 hp / Petrol / 2008 / Used vehicle</p>
+
+              <div class="major-actions">
+                <a href="car-details.html" class="button small next"
+                  >View Car</a
+                >
+              </div>
+            </header>
+          </article>
+
+          <article
+            style="
+              background-image: url('/static/images/product-4-720x480.jpg');
+            "
+          >
+            <span class="image">
+              <img
+                src="{{ url_for('static', filename = 'images/product-4-720x480.jpg') }}"
+                alt=""
+              />
+            </span>
+
+            <header class="major">
+              <p>
+                <i class="fa fa-dashboard"></i> 130 000km &nbsp;&nbsp;
+                <i class="fa fa-cube"></i> 1800cc&nbsp;&nbsp;
+                <i class="fa fa-cog"></i> Manual
+              </p>
+
+              <h3>Lorem ipsum dolor sit amet, consectetur</h3>
+
+              <p><del>$11199.00</del> <strong> $11179.00</strong></p>
+
+              <p>190 hp / Petrol / 2008 / Used vehicle</p>
+
+              <div class="major-actions">
+                <a href="car-details.html" class="button small next"
+                  >View Car</a
+                >
+              </div>
+            </header>
+          </article>
+
+          <article
+            style="
+              background-image: url('/static/images/product-5-720x480.jpg');
+            "
+          >
+            <span class="image">
+              <img
+                src="{{ url_for('static', filename = 'images/product-5-720x480.jpg') }}"
+                alt=""
+              />
+            </span>
+
+            <header class="major">
+              <p>
+                <i class="fa fa-dashboard"></i> 130 000km &nbsp;&nbsp;
+                <i class="fa fa-cube"></i> 1800cc&nbsp;&nbsp;
+                <i class="fa fa-cog"></i> Manual
+              </p>
+
+              <h3>Lorem ipsum dolor sit amet, consectetur</h3>
+
+              <p><del>$11199.00</del> <strong> $11179.00</strong></p>
+
+              <p>190 hp / Petrol / 2008 / Used vehicle</p>
+
+              <div class="major-actions">
+                <a href="car-details.html" class="button small next"
+                  >View Car</a
+                >
+              </div>
+            </header>
+          </article>
+
+          <article
+            style="
+              background-image: url('/static/images/product-6-720x480.jpg');
+            "
+          >
+            <span class="image">
+              <img
+                src="{{ url_for('static', filename = 'images/product-6-720x480.jpg') }}"
+                alt=""
+              />
+            </span>
+
+            <header class="major">
+              <p>
+                <i class="fa fa-dashboard"></i> 130 000km &nbsp;&nbsp;
+                <i class="fa fa-cube"></i> 1800cc&nbsp;&nbsp;
+                <i class="fa fa-cog"></i> Manual
+              </p>
+
+              <h3>Lorem ipsum dolor sit amet, consectetur</h3>
+
+              <p><del>$11199.00</del> <strong> $11179.00</strong></p>
+
+              <p>190 hp / Petrol / 2008 / Used vehicle</p>
+
+              <div class="major-actions">
+                <a href="car-details.html" class="button small next"
+                  >View Car</a
+                >
+              </div>
+            </header>
+          </article>
+        </section>
+      </div>
+
+      <!-- Footer -->
+      <footer id="footer">
+        <div class="inner">
+          <ul class="icons">
+            <li>
+              <a href="#" class="icon alt fa-twitter"
+                ><span class="label">Twitter</span></a
+              >
+            </li>
+            <li>
+              <a href="#" class="icon alt fa-facebook"
+                ><span class="label">Facebook</span></a
+              >
+            </li>
+            <li>
+              <a href="#" class="icon alt fa-instagram"
+                ><span class="label">Instagram</span></a
+              >
+            </li>
+            <li>
+              <a href="#" class="icon alt fa-linkedin"
+                ><span class="label">LinkedIn</span></a
+              >
+            </li>
+          </ul>
+          <ul class="copyright">
+            <li>Copyright © 2020 Company Name - Template by:</li>
+            <li><a href="https://www.phpjabbers.com/">PHPJabbers.com</a></li>
+          </ul>
+        </div>
+      </footer>
+    </div>
+
+    <!-- Scripts -->
+    <!-- <script src="assets/bootstrap/js/bootstrap.bundle.min.js"></script> -->
+    <script src="{{ url_for('static', filename = 'js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename = 'bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+
+    <script src="{{ url_for('static', filename = 'js/jquery.scrolly.min.js') }}"></script>
+    <script src="{{ url_for('static', filename = 'js/jquery.scrollex.min.js') }}"></script>
+    <script src="{{ url_for('static', filename = 'js/browser.js') }}"></script>
+    <script src="{{ url_for('static', filename = 'js/breakpoints.min.js') }}"></script>
+    <script src="{{ url_for('static', filename = 'js/util.js') }}"></script>
+    <script src="{{ url_for('static', filename = 'js/main.js') }}"></script>
+  </body>
+</html>

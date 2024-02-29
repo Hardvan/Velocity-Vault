@@ -28,7 +28,7 @@ def save_qr_code(user_id, user, folder='QR_ID'):
         folder (str, optional): The folder to save the QR code to. Defaults to 'QR_ID'.
 
     Returns:
-        None
+        str: The path to the saved QR code.
 
     Raises:
         FileNotFoundError: If the logo for the user is not found.
@@ -85,6 +85,8 @@ def save_qr_code(user_id, user, folder='QR_ID'):
     image_path = f"{folder}/{user_id}.png"
     img_with_borders.save(image_path)
     print(f"✅ Saved QR code to: {image_path}")
+
+    return image_path
 
 
 if __name__ == "__main__":

@@ -8,7 +8,15 @@
     />
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
     <title>Dashboard</title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
     <!-- Font Awesome -->
+
     <link
       rel="stylesheet"
       href="https://use.fontawesome.com/releases/v6.0.0/css/all.css"
@@ -79,7 +87,63 @@
           }
         }
       </style>
+      {% if alert == True %}
+      <div
+        class="alert alert-warning alert-dismissible fade show"
+        role="alert"
+        style="margin-top: 4%"
+      >
+        {% if name == "employee" %}
+        <strong>Login successful</strong>
+        {% elif action == "sign_up" %}
+        <strong>Registration successful</strong>
+        {% else %}
+        <strong>Logged in successfully</strong>
+        {% endif %}
+        <button
+          type="button"
+          class="close"
+          data-bs-dismiss="alert"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      {% set alert = False %} {% endif %} {% if name == "unsuccessful" %}
+      <div
+        class="alert alert-warning alert-dismissible fade show"
+        role="alert"
+        style="margin-top: 4%"
+      >
+        <strong>Login failed, incorrect username or password</strong>
 
+        <button
+          type="button"
+          class="close"
+          data-bs-dismiss="alert"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      {% endif %} {% if name == "yamete_kudasai" %}
+      <div
+        class="alert alert-danger alert-dismissible fade show"
+        role="alert"
+        style="margin-top: 4%"
+      >
+        <strong>Please login first</strong>
+
+        <button
+          type="button"
+          class="close"
+          data-bs-dismiss="alert"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      {% endif %}
       <!-- Navbar -->
       <nav
         class="navbar navbar-expand-lg navbar-light fixed-top text-success"
@@ -109,26 +173,33 @@
           </button>
           <div class="collapse navbar-collapse" id="navbarExample01">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0" style="color: white">
+              {% if name == "customer" %}
+              <li class="nav-item active">
+                <a
+                  class="nav-link text-white"
+                  aria-current="page"
+                  href="{{ url_for('custLogin', bypass = 0) }}"
+                  >Home</a
+                >
+              </li>
+              {% else %}
               <li class="nav-item active">
                 <a class="nav-link text-white" aria-current="page" href="/"
                   >Home</a
                 >
               </li>
+              {% endif %} {% if name == "customer" or logged_in == False %}
               <li class="nav-item">
-                <a
-                  class="nav-link text-white"
-                  href="https://www.youtube.com/channel/UC5CF7mLQZhvx8O5GODZAhdA"
-                  rel="nofollow"
-                  target="_blank"
+                <a class="nav-link text-white" href="/index" rel="nofollow"
                   >Cars</a
                 >
               </li>
               <li class="nav-item">
-                <a
-                  class="nav-link text-white"
-                  href="https://mdbootstrap.com/docs/standard/"
-                  target="_blank"
-                  >Wishlist</a
+                <a class="nav-link text-white" href="/wishlist">Wishlist</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link text-white" href="/appointments"
+                  >Appointments</a
                 >
               </li>
               <li class="nav-item">
@@ -136,9 +207,11 @@
                   class="nav-link text-white"
                   href="https://mdbootstrap.com/docs/standard/"
                   target="_blank"
-                  >Appointments</a
+                  >Profile</a
                 >
               </li>
+
+              {% endif %} {% if name == "employee" %}
               <li class="nav-item">
                 <a
                   class="nav-link text-white"
@@ -163,6 +236,7 @@
                   >Reviews</a
                 >
               </li>
+              {% endif %}
             </ul>
           </div>
         </div>
@@ -199,7 +273,7 @@
                 Rev up your style and drive into luxury with our showroom's
                 exquisite selection of dream rides!
               </p>
-
+              {% if logged_in == False %}
               <p style="font-family: 'Protest Revolution'; color: aqua">
                 Login here
                 <i
@@ -221,10 +295,54 @@
                 class="btn btn-outline-light btn-lg m-2"
                 data-mdb-ripple-init
                 data-mdb-modal-init
-                data-mdb-target="#modalRegisterForm"
+                data-mdb-target="#modalLoginFormEmployee"
                 role="button"
                 >Employee</a
               >
+
+              {% elif name == "customer" %}
+              <p style="font-family: 'Protest Revolution'; color: aqua">
+                Welcome
+                <i
+                  class="fa fa-anchor"
+                  aria-hidden="true"
+                  style="padding-left: 2px"
+                ></i>
+              </p>
+              <a
+                class="btn btn-outline-light btn-lg m-2"
+                data-mdb-ripple-init
+                data-mdb-modal-init
+                href="/index"
+                role="button"
+                >Explore</a
+              >
+              <a
+                class="btn btn-outline-light btn-lg m-2"
+                data-mdb-ripple-init
+                data-mdb-modal-init
+                href="/"
+                role="button"
+                >Logout</a
+              >
+              {% else %}
+              <p style="font-family: 'Protest Revolution'; color: aqua">
+                Welcome
+                <i
+                  class="fa fa-anchor"
+                  aria-hidden="true"
+                  style="padding-left: 2px"
+                ></i>
+              </p>
+              <a
+                class="btn btn-outline-light btn-lg m-2"
+                data-mdb-ripple-init
+                data-mdb-modal-init
+                href="/"
+                role="button"
+                >Logout</a
+              >
+              {% endif %}
             </div>
           </div>
         </div>
@@ -344,28 +462,6 @@
 
     <!--Footer-->
     <footer class="text-lg-start" style="background-color: black">
-      <div class="py-4 text-center">
-        <a
-          role="button"
-          class="btn btn-primary btn-lg m-2"
-          data-mdb-ripple-init
-          href="https://www.youtube.com/channel/UC5CF7mLQZhvx8O5GODZAhdA"
-          rel="nofollow"
-          target="_blank"
-        >
-          Learn Bootstrap 5
-        </a>
-        <a
-          role="button"
-          class="btn btn-primary btn-lg m-2"
-          data-mdb-ripple-init
-          href="https://mdbootstrap.com/docs/standard/"
-          target="_blank"
-        >
-          Download MDB UI KIT
-        </a>
-      </div>
-
       <hr class="m-0" />
 
       <div class="text-center py-4 align-items-center">
@@ -431,58 +527,139 @@
             color: aqua;
           "
         >
-          <div class="modal-header text-center">
-            <h4
-              class="modal-title w-100 font-weight-bold"
-              style="font-family: 'Protest Revolution'"
-            >
-              Sign in
-            </h4>
-          </div>
-          <div class="modal-body mx-3">
-            <div class="md-form mb-5">
-              <i
-                class="fas fa-envelope prefix grey-text"
-                style="color: white"
-              ></i>
-              <input
-                type="email"
-                id="defaultForm-email"
-                class="form-control validate"
-              />
-              <label
-                data-error="wrong"
-                data-success="right"
-                for="defaultForm-email"
+          <form action="/customerDashboard" method="post">
+            <div class="modal-header text-center">
+              <h4
+                class="modal-title w-100 font-weight-bold"
                 style="font-family: 'Protest Revolution'"
-                >Your email</label
               >
+                Sign in
+              </h4>
             </div>
+            <div class="modal-body mx-3">
+              <div class="md-form mb-5">
+                <i
+                  class="fas fa-envelope prefix grey-text"
+                  style="color: white"
+                ></i>
+                <input
+                  type="email"
+                  id="defaultForm-email"
+                  name="email"
+                  class="form-control validate"
+                />
+                <label
+                  data-error="wrong"
+                  data-success="right"
+                  for="defaultForm-email"
+                  style="font-family: 'Protest Revolution'"
+                  >Your email</label
+                >
+              </div>
 
-            <div class="md-form mb-4">
-              <i class="fas fa-lock prefix grey-text" style="color: white"></i>
-              <input
-                type="password"
-                id="defaultForm-pass"
-                class="form-control validate"
-              />
-              <label
-                data-error="wrong"
-                data-success="right"
-                for="defaultForm-pass"
-                style="font-family: 'Protest Revolution'"
-                >Your password</label
-              >
+              <div class="md-form mb-4">
+                <i
+                  class="fas fa-lock prefix grey-text"
+                  style="color: white"
+                ></i>
+                <input
+                  type="password"
+                  id="defaultForm-pass"
+                  name="pass"
+                  class="form-control validate"
+                />
+                <label
+                  data-error="wrong"
+                  data-success="right"
+                  for="defaultForm-pass"
+                  style="font-family: 'Protest Revolution'"
+                  >Your password</label
+                >
+              </div>
             </div>
-          </div>
-          <div class="modal-footer d-flex justify-content-center">
-            <button class="btn btn-light">Login</button>
-          </div>
+            <div class="modal-footer d-flex justify-content-center">
+              <button type="submit" class="btn btn-light">Login</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <!--SignIn Modal here for employees-->
+    <div
+      class="modal fade"
+      id="modalLoginFormEmployee"
+      tabindex="-1"
+      role="dialog"
+      aria-labelledby="myModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div
+          class="modal-content"
+          style="
+            background-image: url('/static/images/bakdrop1.png');
+            color: aqua;
+          "
+        >
+          <form action="/employeeDashboard" method="post">
+            <div class="modal-header text-center">
+              <h4
+                class="modal-title w-100 font-weight-bold"
+                style="font-family: 'Protest Revolution'"
+              >
+                Sign in
+              </h4>
+            </div>
+            <div class="modal-body mx-3">
+              <div class="md-form mb-5">
+                <i
+                  class="fas fa-envelope prefix grey-text"
+                  style="color: white"
+                ></i>
+                <input
+                  type="text"
+                  id="defaultForm-email"
+                  name="email"
+                  class="form-control validate"
+                />
+                <label
+                  data-error="wrong"
+                  data-success="right"
+                  for="defaultForm-email"
+                  style="font-family: 'Protest Revolution'"
+                  >Your Name</label
+                >
+              </div>
+
+              <div class="md-form mb-4">
+                <i
+                  class="fas fa-lock prefix grey-text"
+                  style="color: white"
+                ></i>
+                <input
+                  type="password"
+                  id="defaultForm-pass"
+                  name="pass"
+                  class="form-control validate"
+                />
+                <label
+                  data-error="wrong"
+                  data-success="right"
+                  for="defaultForm-pass"
+                  style="font-family: 'Protest Revolution'"
+                  >Your password</label
+                >
+              </div>
+            </div>
+            <div class="modal-footer d-flex justify-content-center">
+              <button type="submit" class="btn btn-light">Login</button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
 
-    <!-- Modal for choosing signup/login-->
+    <!-- Modal for choosing signup/login for customers-->
     <!-- Modal -->
     <div
       class="modal fade"
@@ -549,68 +726,114 @@
             color: aqua;
           "
         >
-          <div class="modal-header text-center">
-            <h4
-              class="modal-title w-100 font-weight-bold"
-              style="font-family: 'Protest Revolution'"
-            >
-              Sign up
-            </h4>
-          </div>
-          <div class="modal-body mx-3">
-            <div class="md-form mb-5">
-              <i class="fas fa-user prefix grey-text" style="color: white"></i>
-              <input
-                type="text"
-                id="orangeForm-name"
-                class="form-control validate"
-              />
-              <label
-                data-error="wrong"
-                data-success="right"
-                for="orangeForm-name"
+          <form action="/customerDashboard" method="post">
+            <div class="modal-header text-center">
+              <h4
+                class="modal-title w-100 font-weight-bold"
                 style="font-family: 'Protest Revolution'"
-                >Your name</label
               >
+                Sign up
+              </h4>
             </div>
-            <div class="md-form mb-5">
-              <i
-                class="fas fa-envelope prefix grey-text"
-                style="color: white"
-              ></i>
-              <input
-                type="email"
-                id="orangeForm-email"
-                class="form-control validate"
-              />
-              <label
-                data-error="wrong"
-                data-success="right"
-                for="orangeForm-email"
-                style="font-family: 'Protest Revolution'"
-                >Your email</label
-              >
-            </div>
+            <div class="modal-body mx-3">
+              <div class="md-form mb-5">
+                <i
+                  class="fas fa-user prefix grey-text"
+                  style="color: white"
+                ></i>
+                <input
+                  type="text"
+                  id="orangeForm-name"
+                  name="orangeForm-name"
+                  class="form-control validate"
+                />
+                <label
+                  data-error="wrong"
+                  data-success="right"
+                  for="orangeForm-name"
+                  style="font-family: 'Protest Revolution'"
+                  >Your name</label
+                >
+              </div>
+              <div class="md-form mb-5">
+                <i
+                  class="fas fa-envelope prefix grey-text"
+                  style="color: white"
+                ></i>
+                <input
+                  type="email"
+                  id="orangeForm-email"
+                  name="orangeForm-email"
+                  class="form-control validate"
+                />
+                <label
+                  data-error="wrong"
+                  data-success="right"
+                  for="orangeForm-email"
+                  style="font-family: 'Protest Revolution'"
+                  >Your email</label
+                >
+              </div>
+              <div class="md-form mb-5">
+                <i class="fa-brands fa-pagelines" style="color: white"></i>
+                <input
+                  type="number"
+                  id="orangeForm-age"
+                  name="orangeForm-age"
+                  class="form-control validate"
+                />
+                <label
+                  data-error="wrong"
+                  data-success="right"
+                  for="orangeForm-age"
+                  style="font-family: 'Protest Revolution'"
+                  >Your Age
+                </label>
+              </div>
 
-            <div class="md-form mb-4">
-              <i class="fas fa-lock prefix grey-text" style="color: white"></i>
-              <input
-                type="password"
-                id="orangeForm-pass"
-                class="form-control validate"
-              />
-              <label
-                data-error="wrong"
-                data-success="right"
-                for="orangeForm-pass"
-                style="font-family: 'Protest Revolution'"
-                >Your password</label
-              >
+              <div class="md-form mb-5">
+                <i class="fa-solid fa-phone-volume" style="color: white"></i>
+                <input
+                  type="number"
+                  id="orangeForm-phone"
+                  name="orangeForm-phone"
+                  class="form-control validate"
+                />
+                <label
+                  data-error="wrong"
+                  data-success="right"
+                  for="orangeForm-phone"
+                  style="font-family: 'Protest Revolution'"
+                  >Your Phone</label
+                >
+              </div>
+
+              <div class="md-form mb-4">
+                <i
+                  class="fas fa-lock prefix grey-text"
+                  style="color: white"
+                ></i>
+                <input
+                  type="password"
+                  id="orangeForm-pass"
+                  name="orangeForm-pass"
+                  class="form-control validate"
+                />
+                <label
+                  data-error="wrong"
+                  data-success="right"
+                  for="orangeForm-pass"
+                  style="font-family: 'Protest Revolution'"
+                  >Your password</label
+                >
+              </div>
             </div>
-          </div>
-          <div class="modal-footer d-flex justify-content-center">
-            <button class="btn btn-light">Sign up</button>
-          </div>
+            <div class="modal-footer d-flex justify-content-center">
+              <button type="submit" name="sign_up" class="btn btn-light">
+                Sign up
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
@@ -654,5 +877,21 @@
       src="{{ url_for('static', filename = 'js/mouse.js') }}"
     ></script>
     <script src="{{url_for('static', filename='js/mdb.umd.min.js')}}"></script>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+      integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+      integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
+      crossorigin="anonymous"
+    ></script>
   </body>
 </html>

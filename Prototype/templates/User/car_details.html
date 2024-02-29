@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>PHPJabbers.com | Free Car Dealer Website Template</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, user-scalable=no"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static',filename='bootstrap/css/bootstrap.min.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static',filename='css/main.css') }}"
+    />
+    <noscript
+      ><link
+        rel="stylesheet"
+        href="{{ url_for('static',filename='css/noscript.css') }}"
+    /></noscript>
+  </head>
+  <body class="is-preload" style="background-color: rgb(29, 27, 27)">
+    <!-- Wrapper -->
+    <div id="wrapper">
+      <!-- Header -->
+      <header id="header" class="alt">
+        <a href="index.html" class="logo"
+          ><strong>Car Dealer</strong> <span>Website</span></a
+        >
+        <nav>
+          <a href="#menu">Menu</a>
+        </nav>
+      </header>
+
+      <!-- Menu -->
+      <nav id="menu">
+        <ul class="links">
+          <li><a href="index.html">Home </a></li>
+
+          <li class="active"><a href="cars.html">Cars</a></li>
+
+          <li><a href="about-us.html">About Us</a></li>
+
+          <li><a href="blog.html">Blog</a></li>
+
+          <li><a href="contact.html">Contact Us</a></li>
+
+          <li class="dropdown">
+            <a
+              class="nav-link dropdown-toggle"
+              data-toggle="dropdown"
+              href="#"
+              role="button"
+              aria-haspopup="true"
+              aria-expanded="false"
+              >More</a
+            >
+
+            <ul class="dropdown-menu">
+              <li><a href="team.html">Team</a></li>
+              <li><a href="testimonials.html">Testimonials</a></li>
+              <li><a href="faq.html">FAQ</a></li>
+              <li><a href="terms.html">Terms</a></li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Main -->
+      <div id="main" class="alt">
+        <!-- One -->
+        <section id="one">
+          <div class="inner">
+            <header class="major">
+              <h1>{{ fetchdata[1] }}</h1>
+            </header>
+
+            <div class="row">
+              <div class="col-md-6">
+                <img src="{{ fetchdata[2] }}" class="img-responsive" alt="" />
+              </div>
+
+              <div class="col-md-6">
+                <div class="row">
+                  <div class="col-md-4 col-xs-6">
+                    <img
+                      src="{{ url_for('static', filename = 'images/product-1-720x480.jpg') }}"
+                      class="img-responsive"
+                      alt=""
+                    />
+                  </div>
+                  <div class="col-md-4 col-xs-6">
+                    <img
+                      src="{{ url_for('static', filename = 'images/product-2-720x480.jpg') }}"
+                      class="img-responsive"
+                      alt=""
+                    />
+                  </div>
+                  <div class="col-md-4 col-xs-6">
+                    <img
+                      src="{{ url_for('static', filename = 'images/product-3-720x480.jpg') }}"
+                      class="img-responsive"
+                      alt=""
+                    />
+                  </div>
+
+                  <div class="col-md-4 col-xs-6">
+                    <img
+                      src="{{ url_for('static', filename = 'images/product-4-720x480.jpg') }}"
+                      class="img-responsive"
+                      alt=""
+                    />
+                  </div>
+                  <div class="col-md-4 col-xs-6">
+                    <img
+                      src="{{ url_for('static', filename = 'images/product-5-720x480.jpg') }}"
+                      class="img-responsive"
+                      alt=""
+                    />
+                  </div>
+                  <div class="col-md-4 col-xs-6">
+                    <img
+                      src="{{ url_for('static', filename = 'images/product-6-720x480.jpg') }}"
+                      class="img-responsive"
+                      alt=""
+                    />
+                  </div>
+                </div>
+
+                <br />
+
+                <h2>Price : {{ fetchdata[3] }} Lakh</h2>
+              </div>
+            </div>
+
+            <br />
+
+            <form action="#">
+              <div class="fields">
+                <div class="field quarter">
+                  <label>Type</label>
+
+                  <input type="text" readonly value="{{ fetchdata[4] }}" />
+                </div>
+
+                <div class="field quarter">
+                  <label>Make</label>
+
+                  <input type="text" readonly value="{{ fetchdata[5] }}" />
+                </div>
+
+                <div class="field quarter">
+                  <label>Model</label>
+
+                  <input type="text" readonly value="{{ fetchdata[6] }}" />
+                </div>
+
+                <div class="field quarter">
+                  <label>First registration</label>
+
+                  <input type="text" readonly value="{{ fetchdata[7] }}" />
+                </div>
+
+                <div class="field quarter">
+                  <label>Mileage</label>
+
+                  <input type="text" readonly value="{{ fetchdata[8] }} km" />
+                </div>
+
+                <div class="field quarter">
+                  <label>Fuel</label>
+
+                  <input type="text" readonly value="{{ fetchdata[9] }}" />
+                </div>
+
+                <div class="field quarter">
+                  <label>Engine size</label>
+
+                  <input type="text" readonly value="{{ fetchdata[10] }} cc" />
+                </div>
+
+                <div class="field quarter">
+                  <label>Power</label>
+
+                  <input type="text" readonly value="{{ fetchdata[11] }} hp" />
+                </div>
+
+                <div class="field quarter">
+                  <label>Gearbox</label>
+
+                  <input type="text" readonly value="{{ fetchdata[12] }}" />
+                </div>
+
+                <div class="field quarter">
+                  <label>Number of seats</label>
+
+                  <input type="text" readonly value="{{ fetchdata[13] }}" />
+                </div>
+
+                <div class="field quarter">
+                  <label>Doors</label>
+
+                  <input type="text" readonly value="{{ fetchdata[14] }}" />
+                </div>
+
+                <div class="field quarter">
+                  <label>Color</label>
+
+                  <input type="text" readonly value="{{ fetchdata[15] }}" />
+                </div>
+              </div>
+            </form>
+          </div>
+        </section>
+
+        <section id="contact">
+          <div class="inner">
+            <section>
+              <header class="major">
+                <h2>Vehicle Description</h2>
+              </header>
+
+              <p>{{ fetchdata[16] }}</p>
+
+              <div class="major-actions">
+                <a
+                  href="{{ url_for('wishlist', car_id = fetchdata[0]) }}"
+                  class="button small"
+                  >Add to Wishlist</a
+                >
+              </div>
+              <form
+                action="{{ url_for('appointments', car_id = fetchdata[0]) }}"
+                method="post"
+              >
+                <h5>
+                  Date:
+                  <input
+                    type="datetime-local"
+                    id="Test_DatetimeLocal"
+                    name="date"
+                    style="color: black; margin-top: 3%"
+                  />
+                </h5>
+                <div class="major-actions">
+                  <button
+                    type="submit"
+                    class="button small next"
+                    style="margin-left: 10px"
+                  >
+                    Book Test Drive
+                  </button>
+                </div>
+              </form>
+            </section>
+
+            <section class="split">
+              <section>
+                <div class="contact-method">
+                  <span class="icon alt fa-user"></span>
+                  <h3>Velocity Vault</h3>
+                  <span>InterloperK980</span>
+                </div>
+              </section>
+
+              <section>
+                <div class="contact-method">
+                  <span class="icon alt fa-envelope"></span>
+                  <h3>Email</h3>
+                  <a href="#">karan.sathish980@gmail.com</a>
+                </div>
+              </section>
+              <section>
+                <div class="contact-method">
+                  <span class="icon alt fa-phone"></span>
+                  <h3>Phone</h3>
+                  <span>+91 7348911401</span>
+                </div>
+              </section>
+
+              <section>
+                <div class="contact-method">
+                  <span class="icon alt fa-phone"></span>
+                  <h3>Mobile Phone</h3>
+                  <span>+91 7892401241</span>
+                </div>
+              </section>
+            </section>
+          </div>
+        </section>
+      </div>
+
+      <!-- Footer -->
+      <footer id="footer">
+        <div class="inner">
+          <ul class="icons">
+            <li>
+              <a href="#" class="icon alt fa-twitter"
+                ><span class="label">Twitter</span></a
+              >
+            </li>
+            <li>
+              <a href="#" class="icon alt fa-facebook"
+                ><span class="label">Facebook</span></a
+              >
+            </li>
+            <li>
+              <a href="#" class="icon alt fa-instagram"
+                ><span class="label">Instagram</span></a
+              >
+            </li>
+            <li>
+              <a href="#" class="icon alt fa-linkedin"
+                ><span class="label">LinkedIn</span></a
+              >
+            </li>
+          </ul>
+          <ul class="copyright">
+            <li>Copyright © 2024 by Velocity Vault</li>
+          </ul>
+        </div>
+      </footer>
+    </div>
+
+    <!-- Scripts -->
+    <!-- <script src="assets/bootstrap/js/bootstrap.bundle.min.js"></script> -->
+    <script src="{{ url_for('static', filename = 'js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename = 'bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+
+    <script src="{{ url_for('static', filename = 'js/jquery.scrolly.min.js') }}"></script>
+    <script src="{{ url_for('static', filename = 'js/jquery.scrollex.min.js') }}"></script>
+    <script src="{{ url_for('static', filename = 'js/browser.js') }}"></script>
+    <script src="{{ url_for('static', filename = 'js/breakpoints.min.js') }}"></script>
+    <script src="{{ url_for('static', filename = 'js/util.js') }}"></script>
+    <script src="{{ url_for('static', filename = 'js/main.js') }}"></script>
+  </body>
+</html>
