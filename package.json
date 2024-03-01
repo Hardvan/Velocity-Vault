@@ -1,0 +1,23 @@
+{
+  "name": "dbms-lab-el",
+  "version": "1.0.0",
+  "description": "This repository contains the documents/source code associated with the Next Gen Car Showroom Management System project, developed as part of the DBMS Lab Experiential Learning component.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KaranS09/DBMS-Lab-EL.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/KaranS09/DBMS-Lab-EL/issues"
+  },
+  "homepage": "https://github.com/KaranS09/DBMS-Lab-EL#readme",
+  "devDependencies": {
+    "tailwindcss": "^3.4.1"
+  }
+}

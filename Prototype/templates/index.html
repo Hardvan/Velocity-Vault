@@ -1,28 +1,306 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Next-Gen Car Showroom Management System</title>
-
-    <!-- Favicon -->
-    <link
-      rel="shortcut icon"
-      href="{{ url_for('static', filename='favicon/favicon.png') }}"
-      type="image/x-icon"
+    <title>PHPJabbers.com | Free Car Dealer Website Template</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, user-scalable=no"
     />
-
-    <!-- Custom CSS -->
     <link
       rel="stylesheet"
-      href="{{ url_for('static', filename='css/index.css') }}"
+      href="{{ url_for('static',filename='bootstrap/css/bootstrap.min.css') }}"
     />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static',filename='css/main.css') }}"
+    />
+    <noscript
+      ><link
+        rel="stylesheet"
+        href="{{ url_for('static',filename='css/noscript.css') }}"
+    /></noscript>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Protest+Revolution&family=Roboto:wght@400;500;700&family=Tangerine:wght@700&display=swap"
+      rel="stylesheet"
+    />
+    
   </head>
+  <body style="background-color: rgb(29, 27, 27)" class="is-preload">
+    <!-- Wrapper -->
+    <div id="wrapper" style="background-color: rgb(29, 27, 27)">
+      <!-- Header -->
+      <header id="header" class="alt">
+        <a href="index.html" class="logo"
+          ><strong>Car Dealer</strong> <span>Website</span></a
+        >
+        <nav>
+          <a href="#menu">Menu</a>
+        </nav>
+      </header>
 
-  <body>
-    <h1 class="title">Next-Gen Car Showroom Management System</h1>
+      <!-- Menu -->
+      <nav
+        id="menu"
+        style="
+          background-color: rgb(29, 27, 27);
+          background-position: center 0px;
+        "
+      >
+        <ul class="links">
+          <li class="active"><a href="index.html">Home </a></li>
 
-    <!-- Custom JS -->
-    <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+          <li><a href="cars.html">Cars</a></li>
+
+          <li><a href="about-us.html">About Us</a></li>
+
+          <li><a href="blog.html">Blog</a></li>
+
+          <li><a href="contact.html">Contact Us</a></li>
+
+          <li class="dropdown">
+            <a
+              class="nav-link dropdown-toggle"
+              data-toggle="dropdown"
+              href="#"
+              role="button"
+              aria-haspopup="true"
+              aria-expanded="false"
+              >More</a
+            >
+
+            <ul class="dropdown-menu">
+              <li><a href="team.html">Team</a></li>
+              <li><a href="testimonials.html">Testimonials</a></li>
+              <li><a href="faq.html">FAQ</a></li>
+              <li><a href="terms.html">Terms</a></li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+
+      <!-- Banner -->
+      <section
+        class="major"
+        style="
+          background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+            url('static/images/banner-image-1-1920x700.jpg');
+
+          color: aqua;
+        "
+      >
+        <div class="inner">
+          <header
+            class="major"
+            style="color: aqua; font-family: 'Protest Revolution'"
+          >
+            <h1 style="color: aqua">
+              Browse Through our unique collection of cars
+            </h1>
+          </header>
+          <div class="content">
+            <p
+              style="
+                color: aqua;
+                font-family: 'Protest Revolution';
+                padding-bottom: 10%;
+              "
+            >
+              Discover the perfect vehicle for your needs!!
+            </p>
+            <div class="major-actions">
+                <a href="{{ url_for('custLogin', bypass = 0) }}" class="button small next"
+                  >Go Home</a
+                >
+              </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- About us -->
+      <section>
+        <div class="inner">
+          <header class="major">
+            <h2 style="font-family: 'Protest Revolution'">Unused Cars</h2>
+          </header>
+          <p>
+            Nullam et orci eu lorem consequat tincidunt vivamus et sagittis
+            libero. Mauris aliquet magna magna sed nunc rhoncus pharetra.
+            Pellentesque condimentum sem. In efficitur ligula tate urna.
+            Maecenas laoreet massa vel lacinia pellentesque lorem ipsum dolor.
+            Nullam et orci eu lorem consequat tincidunt. Vivamus et sagittis
+            libero. Mauris aliquet magna magna sed nunc rhoncus amet pharetra et
+            feugiat tempus.
+          </p>
+        </div>
+      </section>
+
+      <!-- Main -->
+      <div id="main" style="background-color: rgb(29, 27, 27)">
+        <!-- Featured Cars -->
+        <section class="tiles">
+          {% for data in car_data if data[7] == 'Unregister' %}
+          <article
+            style="
+              background-image: url('{{ data[2] }}');
+            "
+          >
+            <span class="image">
+              <img src="{{ data[2] }}" alt="" />
+            </span>
+
+            <header class="major">
+              <p>
+                <i class="fa fa-dashboard"></i> {{ data[8] }}km &nbsp;&nbsp;
+                <i class="fa fa-cube"></i> {{ data[10] }}cc&nbsp;&nbsp;
+                <i class="fa fa-cog"></i> {{ data[12] }}
+              </p>
+
+              <h3>{{ data[1] }}</h3>
+
+              <strong>{{ data[3] }} lakh</strong></p>
+
+              <p>{{ data[11] }} hp / {{ data[9] }} / {{ data[6] }} / New vehicle</p>
+
+              <div class="major-actions">
+                <a href="{{ url_for('carDetails', car_id = data[0] ) }}" class="button small next"
+                  >View Car</a
+                >
+              </div>
+            </header>
+          </article>
+          {% endfor %}
+
+          
+        </section>
+
+        <!-- About us -->
+        <section>
+          <div class="inner">
+            <header class="major">
+              <h2 style="font-family: 'Protest Revolution'">Used Cars</h2>
+            </header>
+            <p>
+              Nullam et orci eu lorem consequat tincidunt vivamus et sagittis
+              libero. Mauris aliquet magna magna sed nunc rhoncus pharetra.
+              Pellentesque condimentum sem. In efficitur ligula tate urna.
+              Maecenas laoreet massa vel lacinia pellentesque lorem ipsum dolor.
+              Nullam et orci eu lorem consequat tincidunt. Vivamus et sagittis
+              libero. Mauris aliquet magna magna sed nunc rhoncus amet pharetra
+              et feugiat tempus.
+            </p>
+          </div>
+        </section>
+
+        <!-- Used cars -->
+        <section class="tiles">
+          {% for data in car_data if data[7] != 'Unregister' %}
+          <article
+            style="
+              background-image: url('{{ data[2] }}');
+            "
+          >
+            <span class="image">
+              <img
+                src="{{ data[2] }}"
+                alt=""
+              />
+            </span>
+
+            <header class="major">
+              <p>
+                <i class="fa fa-dashboard"></i> {{ data[8] }}km &nbsp;&nbsp;
+                <i class="fa fa-cube"></i> {{ data[10] }}cc&nbsp;&nbsp;
+                <i class="fa fa-cog"></i> {{ data[12] }}
+              </p>
+
+              <h3>{{ data[1] }}</h3>
+
+              <strong>{{ data[3] }} lakh</strong></p>
+
+              <p>{{ data[11] }} hp / {{ data[9] }} / {{ data[6] }} / Used vehicle</p>
+
+
+              <div class="major-actions">
+                <a href="{{ url_for('carDetails', car_id = data[0] ) }}" class="button small next"
+                  >View Car</a
+                >
+              </div>
+            </header>
+          </article>
+          {% endfor %}
+
+          
+        </section>
+
+        <!-- Testimonials -->
+        <section style="background-color: rgb(29, 27, 27)">
+          <div class="inner">
+            <header class="major">
+              <h2 style="font-family: 'Protest Revolution'">Our Approach</h2>
+            </header>
+            <div class="row">
+              <div class="col-6">
+                <p>
+                  "Nullam et orci eu lorem consequat tincidunt vivamus et
+                    sagittis libero. Mauris aliquet magna magna sed nunc rhoncus
+                    pharetra. Pellentesque condimentum sem. In efficitur ligula
+                    tate urna. Maecenas laoreet massa vel lacinia pellentesque
+                    lorem ipsum dolor. Nullam et orci eu lorem consequat
+                    tincidunt."
+                </p>
+                
+              </div>
+
+             
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Footer -->
+      <footer id="footer">
+        <div class="inner">
+          <ul class="icons">
+            <li>
+              <a href="#" class="icon alt fa-twitter"
+                ><span class="label">Twitter</span></a
+              >
+            </li>
+            <li>
+              <a href="#" class="icon alt fa-facebook"
+                ><span class="label">Facebook</span></a
+              >
+            </li>
+            <li>
+              <a href="#" class="icon alt fa-instagram"
+                ><span class="label">Instagram</span></a
+              >
+            </li>
+            <li>
+              <a href="#" class="icon alt fa-linkedin"
+                ><span class="label">LinkedIn</span></a
+              >
+            </li>
+          </ul>
+          <ul class="copyright">
+            <li>Copyright © 2024 Velocity Vault</li>
+          </ul>
+        </div>
+      </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename = 'js/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename = 'bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+
+    <script src="{{ url_for('static', filename = 'js/jquery.scrolly.min.js') }}"></script>
+    <script src="{{ url_for('static', filename = 'js/jquery.scrollex.min.js') }}"></script>
+    <script src="{{ url_for('static', filename = 'js/browser.js') }}"></script>
+    <script src="{{ url_for('static', filename = 'js/breakpoints.min.js') }}"></script>
+    <script src="{{ url_for('static', filename = 'js/util.js') }}"></script>
+    <script src="{{ url_for('static', filename = 'js/main.js') }}"></script>
   </body>
 </html>
