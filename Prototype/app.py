@@ -71,6 +71,12 @@ if TEST_CONNECTION:
     print("=== MongoDB Connection Test Completed ===")
 
 
+# HTML File variables
+dashboard_html = "User/dashboard.html"
+
+
+# ? Routes
+
 @app.route('/', methods=['GET', 'POST'])
 def dashboard():
     """Main dashboard of the website.
@@ -78,19 +84,11 @@ def dashboard():
     It displays the main features of the website and allows the user to navigate to different pages.
     """
 
-    cur = mysql.connection.cursor()  # Create a cursor
-    # cur.execute("INSERT INTO car_features VALUES('Swift Dzire', 2)")
-    cur.execute("SELECT * FROM car_features")
-    fetchdata = cur.fetchall()
-    print(f"fetchdata: {fetchdata}")
-    # mysql.connection.commit()
-    cur.close()  # Close the cursor
-
     alert = False  # True/False: Alert message is displayed or not
     global current_user_id
     current_user_id = 0
     session['user_id'] = 0
-    return render_template("User/Dashboard.html",
+    return render_template(dashboard_html,
                            alert=alert, logged_in=logged_in,
                            current_user_id=current_user_id,
                            name=name)
@@ -98,85 +96,95 @@ def dashboard():
 
 @app.route('/index')
 def index():
+    """Displays various cars available in the showroom.
+    It allows the user to view the details of each car and add them to their wishlist.
+    """
+
     print(f"session['user_id']: {session['user_id']}")
     if session['user_id'] == 0:  # user is not logged in
-        alert = False
         global name
-        name = "yamete_kudasai"
+        name = "yamete_kudasai"  # dummy name
         return redirect("/")
 
     car_data = get_car_data()
     return render_template("index.html", car_data=car_data)
 
 
-def get_car_data():
-    cur = mysql.connection.cursor()
-    cur.execute("SELECT * FROM car_features")
-    fetchdata = cur.fetchall()
-    print(f"fetchdata: {fetchdata}")
-    cur.close()
-
-    return fetchdata
-
-
 @app.route('/customerDashboard', methods=['GET', 'POST'])
 def custLogin():
+    """Customer login/signup page.
+    After the user logs in or signs up, they are redirected to this page.
+    """
+
     global current_user_id
-    bypass = request.args.get('bypass')
+    bypass = request.args.get('bypass')  # 0: Bypass the login/signup page
 
     if request.method == "POST":
+        # * If the user is signing up
         if 'sign_up' in request.form:
             print(f"request.form: {request.form}")
+            name = request.form['orangeForm-name']
+            age = request.form['orangeForm-age']
+            phone = request.form['orangeForm-phone']
+            email = request.form['orangeForm-email']
+            password = request.form['orangeForm-pass']
+
             alert = True
             action = "sign_up"
-            customer_id = generate_customer_id(request.form['orangeForm-name'],
-                                               request.form['orangeForm-age'], request.form['orangeForm-phone'])
+            customer_id = generate_customer_id(name, age, phone)
             print(f"customer_id: {customer_id}")
             print(f"date.today(): {date.today()}")
+
+            # Insert the new customer into the "customer" table
             cur = mysql.connection.cursor()
-            # str = ("INSERT INTO customer VALUES({customer_id}, %s, %s, %s, %s, %s, %s)", customer_id, request.form['orangeForm-name'], request.form['orangeForm-age'], request.form['orangeForm-phone'], request.form['orangeForm-email'], date.today(), request.form['orangeForm-pass'])
-            str_customer = "INSERT INTO customer VALUES('{}','{}', {}, {}, '{}', '{}', '{}')".format(
-                customer_id, request.form['orangeForm-name'], request.form['orangeForm-age'], request.form['orangeForm-phone'], request.form['orangeForm-email'], date.today(), request.form['orangeForm-pass'])
+            str_customer = f"INSERT INTO customer VALUES('{customer_id}','{name}', {age}, {phone}, '{email}', '{date.today()}', '{password}')"
             print(f"str_customer: {str_customer}")
             cur.execute(str_customer)
             mysql.connection.commit()
             cur.close()
 
+            # TODO: Generate QR Code ID card of the customer
+
             current_user_id = customer_id
             print(f"current_user_id: {current_user_id}")
             session['user_id'] = current_user_id
             logged_in = True
+
+        # If the user is logging in
         else:
-            print(request.form)
+            print(f"request.form: {request.form}")
+            email = request.form['orangeForm-email']
+            password = request.form['orangeForm-pass']
+
+            # TODO: Add option of logging in with QR code
+
             alert = True
             action = "login"
-            cur = mysql.connection.cursor()
-            str_check_customer = "SELECT customer_ID from customer where Password = '{}' and Email = '{}'".format(
-                request.form['pass'], request.form['email'])
-            temp = "SELECT * FROM customer"
-            cur.execute(str_check_customer)
-            customer_id = cur.fetchall()
-            if (customer_id == ()):  # If the customer_id is empty, then the login is unsuccessful
+
+            # Check if the customer exists in the "customer" table
+            exists, customer_id = customerExists(email, password)
+            if (not exists):
                 logged_in = False
                 alert = False
-                return render_template("User/Dashboard.html", alert=alert, name="unsuccessful", action=action, logged_in=logged_in)
+                return render_template(dashboard_html,
+                                       alert=alert, name="unsuccessful",
+                                       action=action, logged_in=logged_in)
 
+            # Login successful
+            logged_in = True
             current_user_id = customer_id[0][0]
             session['user_id'] = current_user_id
             print(f"current_user_id: {current_user_id}")
             print(f"customer_id: {customer_id}")
-            cur.close()
-            logged_in = True
-        # print(request.form['orangeForm-name'])
-        # print(request.form['orangeForm-email'])
-        # print(request.form['orangeForm-pass'])
-    elif bypass == "0":
+
+    elif bypass == "0":  # Bypass the login/signup page
         alert = False
         action = " None"
         logged_in = True
     else:
         alert = False
-    return render_template("User/Dashboard.html",
+
+    return render_template(dashboard_html,
                            alert=alert, name="customer",
                            action=action, logged_in=logged_in)
 
@@ -186,33 +194,25 @@ def empLogin():
 
     if request.method == "POST":
         print(f"request.form: {request.form}")
+        email = request.form['email']
+        password = request.form['pass']
+
         alert = True
         logged_in = True
-        emp_ID = get_empid(request.form['email'], request.form['pass'])
-        if emp_ID == None:
+
+        emp_id = get_empid(email, password)
+        if emp_id == None:  # Login unsuccessful
             logged_in = False
             alert = False
-            return render_template("User/Dashboard.html",
+            return render_template(dashboard_html,
                                    alert=alert, name="unsuccessful",
                                    action="login", logged_in=logged_in)
-        session['user_id'] = emp_ID
+        session['user_id'] = emp_id
     else:
         alert = False
-    return render_template("User/Dashboard.html",
+    return render_template(dashboard_html,
                            alert=alert, name="employee",
                            logged_in=logged_in)
-
-
-def get_empid(email, password):
-    s = f"SELECT emp_ID FROM employee WHERE Name = '{email}' and password = '{password}'"
-    cur = mysql.connection.cursor()
-    cur.execute(s)
-    fetchdata = cur.fetchall()
-    if fetchdata == ():
-        return None
-    print(f"fetchdata[0][0]: {fetchdata[0][0]}")  # employee ID
-    cur.close()
-    return fetchdata[0][0]
 
 
 @app.route('/collections', methods=['GET', 'POST'])
@@ -224,65 +224,50 @@ def cars():
 def carDetails():
     data = request.args.get('car_id')
     print(f"data: {data}")
+
+    # Fetch the details of the selected car from "car_features" table
     cur = mysql.connection.cursor()
     s = f"SELECT * FROM car_features WHERE car_ID = {data}"
     cur.execute(s)
     fetchdata = cur.fetchall()
-    print(f"fetchdata: {fetchdata}")
     cur.close()
 
-    return render_template("User/car_details.html", fetchdata=fetchdata[0])
+    car_details = fetchdata[0]  # first car's details
+    print(f"car_details: {car_details}")
+
+    return render_template("User/car_details.html", fetchdata=car_details)
 
 
 @app.route('/wishlist')
 def wishlist():
-    if session['user_id'] == 0:
+    if session['user_id'] == 0:  # user is not logged in
         alert = False
         global name
         name = "yamete_kudasai"
         return redirect("/")
+
     print(f"session['user_id']: {session['user_id']}")
     car_id = request.args.get('car_id')
     action = request.args.get('action')
     print(f"car_id: {car_id}")
     print(f"action: {action}")
-    if action == "0":
+
+    if action == "0":  # delete the car from the wishlist
         cur = mysql.connection.cursor()
         s1 = f"DELETE FROM car_ownership WHERE owner_cust_id = '{session['user_id']}' and owned_car_id = {car_id}"
         cur.execute(s1)
         mysql.connection.commit()
         cur.close()
-    elif car_id != None:
+    elif car_id != None:  # add the car to the wishlist
         assign_emp_id = get_emp_ids()
         cur = mysql.connection.cursor()
         s2 = f"INSERT INTO car_ownership VALUES('{session['user_id']}',{car_id},{assign_emp_id})"
         cur.execute(s2)
         mysql.connection.commit()
         cur.close()
+
     data = get_data()
     return render_template("User/wishlist.html", data=data)
-
-
-def get_data():
-    cur = mysql.connection.cursor()
-    s = f"SELECT owned_car_id FROM car_ownership WHERE owner_cust_id = '{session['user_id']}'"
-    cur.execute(s)
-    fetchdata = cur.fetchall()
-    print(f"fetchdata: {fetchdata}")
-    cur.close()
-    lst = []  # list of car details
-    for inner in fetchdata:
-        for val in inner:
-            cur = mysql.connection.cursor()
-            s = f"SELECT car_name, image_link, price, car_ID FROM car_features WHERE car_ID = {val}"
-            cur.execute(s)
-            fetchdata = cur.fetchall()
-            fetchdata = fetchdata[0]
-            lst.append(fetchdata)
-            print(f"fetchdata: {fetchdata}")
-            cur.close()
-    print(f"lst: {lst}")
-    return lst
 
 
 @app.route('/sales')
@@ -294,29 +279,111 @@ def sales():
 def appointments():
     temp_app_id = request.args.get('app_id')
     bypass = request.args.get('action')
-    if bypass == "0":
+    if bypass == "0":  # delete the appointment
         delete_entry(temp_app_id)
-    if session['user_id'] == 0:
-        alert = False
+    if session['user_id'] == 0:  # user is not logged in
         global name
         name = "yamete_kudasai"
         return redirect("/")
     if request.method == "POST":
-        datez = request.form['date']
-        date = stemmed(datez)
-        time = stem_time(datez)
+        # Create a new appointment
+        input_date = request.form['date']
+        date = stemmed(input_date)
+        time = stem_time(input_date)
+
         car_id = request.args.get('car_id')
         emp_id = get_emp_ids()
-        app_id = gib_app_id_plz(session['user_id'], car_id, date)
-        plz_push_all(app_id, date, time, emp_id, session['user_id'], car_id)
-        print(date + " : " + time)
+        app_id = generate_app_id(session['user_id'], car_id, date)
+        create_appointment(app_id, date, time, emp_id,
+                           session['user_id'], car_id)
+
+        print(f"{date} : {time}")
         print(f"car_id: {car_id}")
+
     print(f"session['user_id']: {session['user_id']}")
-    lst = gen_list_to_pass(session['user_id'])
-    return render_template("User/Appointments.html", list=lst)
+    appointments_list = get_appointments(session['user_id'])
+    return render_template("User/Appointments.html", list=appointments_list)
+
+
+def get_car_data():
+
+    # Fetch the details of all the cars from the "car_features" table
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM car_features")
+    fetchdata = cur.fetchall()
+    print(f"fetchdata: {fetchdata}")
+    cur.close()
+    return fetchdata
+
+
+def customerExists(email, password):
+    """Checks if the customer exists in the "customer" table.
+
+    Args:
+        email (str): The customer's email.
+        password (str): The customer's password.
+
+    Returns:
+        bool: True if the customer exists, False otherwise.
+        str: The customer's ID if they exist, None otherwise.
+    """
+    cur = mysql.connection.cursor()
+    str_check_customer = f"SELECT customer_ID from customer where Password = '{password}' and Email = '{email}'"
+    cur.execute(str_check_customer)
+    customer_id = cur.fetchall()
+    cur.close()
+    return bool(customer_id), customer_id
+
+
+def get_empid(email, password):
+
+    # Check if the employee exists in the "employee" table
+    cur = mysql.connection.cursor()
+    s = f"SELECT emp_ID FROM employee WHERE Name = '{email}' and password = '{password}'"
+    cur.execute(s)
+    fetchdata = cur.fetchall()
+    cur.close()
+
+    if fetchdata == ():  # no such employee
+        return None
+
+    # Return the employee ID
+    emp_id = fetchdata[0][0]
+    print(f"emp_id: {emp_id}")
+    return emp_id
+
+
+def get_data():
+
+    # Fetch the details of all the cars in the wishlist from the "car_ownership" table
+    cur = mysql.connection.cursor()
+    s = f"SELECT owned_car_id FROM car_ownership WHERE owner_cust_id = '{session['user_id']}'"
+    cur.execute(s)
+    fetchdata = cur.fetchall()
+    print(f"fetchdata: {fetchdata}")
+    cur.close()
+
+    car_details = []  # list of car details
+    for car in fetchdata:  # each car in the wishlist
+        for car_id in car:  # each car's ID
+
+            # Fetch the details of the car from the "car_features" table
+            cur = mysql.connection.cursor()
+            s = f"SELECT car_name, image_link, price, car_ID FROM car_features WHERE car_ID = {car_id}"
+            cur.execute(s)
+            fetchdata = cur.fetchall()
+            fetchdata = fetchdata[0]
+            car_details.append(fetchdata)
+            print(f"fetchdata: {fetchdata}")
+            cur.close()
+
+    print(f"car_details: {car_details}")
+    return car_details
 
 
 def delete_entry(app_id):
+
+    # Delete the appointment from the "appointment" table
     cur = mysql.connection.cursor()
     s = f"DELETE FROM appointment WHERE app_ID = '{app_id}'"
     cur.execute(s)
@@ -324,7 +391,9 @@ def delete_entry(app_id):
     cur.close()
 
 
-def gen_list_to_pass(cust_id):
+def get_appointments(cust_id):
+
+    # Generate the list of appointments to pass to the HTML file
     s = f"SELECT Date, Time, Name, car_name, image_link, app_ID FROM appointment INNER JOIN car_features ON   appointment.Appointment_for_car_id = car_features.car_ID INNER JOIN employee ON appointment.handling_emp_id = employee.emp_ID WHERE appointment.booking_cust_id = '{cust_id}'"
     cur = mysql.connection.cursor()
     cur.execute(s)
@@ -334,7 +403,9 @@ def gen_list_to_pass(cust_id):
     return fetchdata
 
 
-def plz_push_all(app_id, date, time, emp_id, cust_id, car_id):
+def create_appointment(app_id, date, time, emp_id, cust_id, car_id):
+
+    # Insert the new appointment into the "appointment" table
     cur = mysql.connection.cursor()
     s2 = f"INSERT INTO appointment VALUES('{app_id}','{date}','{time}',{emp_id},'{cust_id}',{car_id})"
     cur.execute(s2)
@@ -342,13 +413,16 @@ def plz_push_all(app_id, date, time, emp_id, cust_id, car_id):
     cur.close()
 
 
-def gib_app_id_plz(cust_id, car_id, date):
-    s = cust_id[:4] + "_" + car_id + date[-2:]
-    print(f"s: {s}")
-    return s
+def generate_app_id(cust_id, car_id, date):
+
+    # Generate the appointment ID
+    app_id = cust_id[:4] + "_" + car_id + date[-2:]
+    print(f"app_id: {app_id}")
+    return app_id
 
 
 def stemmed(date):
+    # Extract the date from the datetime string
     s = ""
     for ch in date:
         if ch == 'T':
@@ -358,6 +432,7 @@ def stemmed(date):
 
 
 def stem_time(date):
+    # Extract the time from the datetime string
     s = ""
     flag = False
     for ch in date:
@@ -369,18 +444,18 @@ def stem_time(date):
 
 
 def get_emp_ids():
+
+    # Fetch the employee IDs from the "employee" table
     cur = mysql.connection.cursor()
     s = "SELECT emp_ID FROM employee"
     cur.execute(s)
     fetchdata = cur.fetchall()
     cur.close()
-    lst = []
-    for ele in fetchdata:
-        lst.append(ele[0])
-    length = len(lst)
-    chosen = random.randint(0, length-1)
-    print(f"lst: {lst}")
-    return lst[chosen]
+
+    emp_ids = [e[0] for e in fetchdata]
+    print(f"emp_ids: {emp_ids}")
+    chosen = random.randint(0, len(emp_ids)-1)
+    return emp_ids[chosen]
 
 
 def save_qr_image(base64_img, image_path):
@@ -474,7 +549,7 @@ def delete_qr_code(user_id):
 
 
 if TEST_CRUD_QR_CODE:
-    
+
     print("=== Testing CRUD Operations for QR Codes ===")
 
     user_id = 'charlie_3210_2757'
@@ -495,7 +570,7 @@ if TEST_CRUD_QR_CODE:
 
     # Delete
     delete_qr_code(user_id)
-    
+
     print("=== CRUD Operations for QR Codes Test Completed ===")
 
 
