@@ -460,6 +460,26 @@
     </main>
     <!--Main layout-->
 
+    <!-- Customer QR ID Image base64 -->
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6">
+          <img
+            src="data:image/png;base64,{{ qr_image }}"
+            alt="QR Image"
+            style="width: 50%; height: auto; margin: 0 auto"
+          />
+        </div>
+        <div class="col-md-6" style="display: flex; flex-direction: column; justify-content: flex-end;">
+          <h3 style="margin-top: auto;">Your QR Code</h3>
+          <p style="margin-top: auto;">
+            Please present this QR code at the entrance to the showroom to
+            access your profile and make appointments.
+          </p>
+        </div>
+      </div>
+    </div>
+
     <!--Footer-->
     <footer class="text-lg-start" style="background-color: black">
       <hr class="m-0" />

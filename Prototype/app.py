@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, jsonify, redirect, session
-from QR_OCR_Generator import generate_customer_id
+from QR_OCR_Generator import generate_customer_id, generate_employee_id, save_qr_code
 from flask_mysqldb import MySQL
 from datetime import date
 import random
@@ -76,6 +76,16 @@ dashboard_html = "User/dashboard.html"
 
 
 # ? Routes
+# /: Main dashboard of the website
+# /index: Displays various cars available in the showroom
+# /customerDashboard: Customer login/signup page
+# /employeeDashboard: Employee login page
+# /collections: Displays the collection of cars
+# /carDetails: Displays the details of a car
+# /wishlist: Displays the wishlist of the user
+# /sales: Displays the sales page
+# /appointments: Displays the appointments page
+
 
 @app.route('/', methods=['GET', 'POST'])
 def dashboard():
@@ -120,7 +130,7 @@ def custLogin():
     bypass = request.args.get('bypass')  # 0: Bypass the login/signup page
 
     if request.method == "POST":
-        # * If the user is signing up
+        # * Signing up the user
         if 'sign_up' in request.form:
             print(f"request.form: {request.form}")
             name = request.form['orangeForm-name']
@@ -143,18 +153,23 @@ def custLogin():
             mysql.connection.commit()
             cur.close()
 
-            # TODO: Generate QR Code ID card of the customer
+            image_path = save_qr_code(
+                customer_id, user="C", folder="QR_ID_Customer")
 
+            # Add the new QR code to the collection "qr_codes"
+            add_qr_code(customer_id, image_path, user="C")
+
+            # Save the customer ID in the session
             current_user_id = customer_id
             print(f"current_user_id: {current_user_id}")
             session['user_id'] = current_user_id
             logged_in = True
 
-        # If the user is logging in
+        # * Logging in the user
         else:
             print(f"request.form: {request.form}")
-            email = request.form['orangeForm-email']
-            password = request.form['orangeForm-pass']
+            email = request.form['email']
+            password = request.form['pass']
 
             # TODO: Add option of logging in with QR code
 
@@ -184,9 +199,13 @@ def custLogin():
     else:
         alert = False
 
+    # Get QR code of the customer
+    qr_code = get_qr_code(current_user_id)
+    qr_image = qr_code['image']
+
     return render_template(dashboard_html,
                            alert=alert, name="customer",
-                           action=action, logged_in=logged_in)
+                           action=action, logged_in=logged_in, qr_image=qr_image)
 
 
 @app.route('/employeeDashboard', methods=['GET', 'POST'])
