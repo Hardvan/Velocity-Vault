@@ -18,10 +18,10 @@ app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
 app.config['MYSQL_DB'] = 'carshowroom'
 
-logged_in = False
-current_user_type = "blank"
-customer_id = "none"
-name = "none"
+logged_in = False  # ? True/False: User is logged in or not
+current_user_type = "blank"  # ? "customer"/"employee": Type of the current user
+customer_id = "none"  # ? "customer_id": ID of the current customer
+name = "none"  # ? "name": Name of the current user
 
 mysql = MySQL(app)
 
@@ -70,14 +70,15 @@ if TEST_CONNECTION:
 
 @app.route('/', methods=['GET', 'POST'])
 def dashboard():
-    cur = mysql.connection.cursor()
+    cur = mysql.connection.cursor()  # Create a cursor
     # cur.execute("INSERT INTO car_features VALUES('Swift Dzire', 2)")
     cur.execute("SELECT * FROM car_features")
     fetchdata = cur.fetchall()
-    print(fetchdata)
+    print(f"fetchdata: {fetchdata}")
     # mysql.connection.commit()
-    cur.close()
-    alert = False
+    cur.close()  # Close the cursor
+
+    alert = False  # True/False: Alert message is displayed or not
     global current_user_id
     current_user_id = 0
     session['user_id'] = 0
@@ -89,12 +90,13 @@ def dashboard():
 
 @app.route('/index')
 def index():
-    print(session['user_id'])
-    if session['user_id'] == 0:
+    print(f"session['user_id']: {session['user_id']}")
+    if session['user_id'] == 0:  # user is not logged in
         alert = False
         global name
         name = "yamete_kudasai"
         return redirect("/")
+
     car_data = get_car_data()
     return render_template("index.html", car_data=car_data)
 
@@ -103,8 +105,9 @@ def get_car_data():
     cur = mysql.connection.cursor()
     cur.execute("SELECT * FROM car_features")
     fetchdata = cur.fetchall()
-    print(fetchdata)
+    print(f"fetchdata: {fetchdata}")
     cur.close()
+
     return fetchdata
 
 
@@ -115,23 +118,24 @@ def custLogin():
 
     if request.method == "POST":
         if 'sign_up' in request.form:
-            print(request.form)
+            print(f"request.form: {request.form}")
             alert = True
             action = "sign_up"
             customer_id = generate_customer_id(request.form['orangeForm-name'],
                                                request.form['orangeForm-age'], request.form['orangeForm-phone'])
-            print(customer_id)
-            print(date.today())
+            print(f"customer_id: {customer_id}")
+            print(f"date.today(): {date.today()}")
             cur = mysql.connection.cursor()
             # str = ("INSERT INTO customer VALUES({customer_id}, %s, %s, %s, %s, %s, %s)", customer_id, request.form['orangeForm-name'], request.form['orangeForm-age'], request.form['orangeForm-phone'], request.form['orangeForm-email'], date.today(), request.form['orangeForm-pass'])
             str_customer = "INSERT INTO customer VALUES('{}','{}', {}, {}, '{}', '{}', '{}')".format(
                 customer_id, request.form['orangeForm-name'], request.form['orangeForm-age'], request.form['orangeForm-phone'], request.form['orangeForm-email'], date.today(), request.form['orangeForm-pass'])
-            print(str_customer)
+            print(f"str_customer: {str_customer}")
             cur.execute(str_customer)
             mysql.connection.commit()
             cur.close()
+
             current_user_id = customer_id
-            print(current_user_id)
+            print(f"current_user_id: {current_user_id}")
             session['user_id'] = current_user_id
             logged_in = True
         else:
@@ -144,15 +148,15 @@ def custLogin():
             temp = "SELECT * FROM customer"
             cur.execute(str_check_customer)
             customer_id = cur.fetchall()
-            if (customer_id == ()):
+            if (customer_id == ()):  # If the customer_id is empty, then the login is unsuccessful
                 logged_in = False
                 alert = False
                 return render_template("User/Dashboard.html", alert=alert, name="unsuccessful", action=action, logged_in=logged_in)
 
             current_user_id = customer_id[0][0]
             session['user_id'] = current_user_id
-            print(current_user_id)
-            print(customer_id)
+            print(f"current_user_id: {current_user_id}")
+            print(f"customer_id: {customer_id}")
             cur.close()
             logged_in = True
         # print(request.form['orangeForm-name'])
@@ -164,25 +168,31 @@ def custLogin():
         logged_in = True
     else:
         alert = False
-    return render_template("User/Dashboard.html", alert=alert, name="customer", action=action, logged_in=logged_in)
+    return render_template("User/Dashboard.html",
+                           alert=alert, name="customer",
+                           action=action, logged_in=logged_in)
 
 
 @app.route('/employeeDashboard', methods=['GET', 'POST'])
 def empLogin():
 
     if request.method == "POST":
-        print(request.form)
+        print(f"request.form: {request.form}")
         alert = True
         logged_in = True
         emp_ID = get_empid(request.form['email'], request.form['pass'])
         if emp_ID == None:
             logged_in = False
             alert = False
-            return render_template("User/Dashboard.html", alert=alert, name="unsuccessful", action="login", logged_in=logged_in)
+            return render_template("User/Dashboard.html",
+                                   alert=alert, name="unsuccessful",
+                                   action="login", logged_in=logged_in)
         session['user_id'] = emp_ID
     else:
         alert = False
-    return render_template("User/Dashboard.html", alert=alert, name="employee", logged_in=logged_in)
+    return render_template("User/Dashboard.html",
+                           alert=alert, name="employee",
+                           logged_in=logged_in)
 
 
 def get_empid(email, password):
@@ -192,7 +202,7 @@ def get_empid(email, password):
     fetchdata = cur.fetchall()
     if fetchdata == ():
         return None
-    print(fetchdata[0][0])
+    print(f"fetchdata[0][0]: {fetchdata[0][0]}")  # employee ID
     cur.close()
     return fetchdata[0][0]
 
@@ -205,13 +215,14 @@ def cars():
 @app.route('/carDetails')
 def carDetails():
     data = request.args.get('car_id')
-    print(data)
+    print(f"data: {data}")
     cur = mysql.connection.cursor()
     s = f"SELECT * FROM car_features WHERE car_ID = {data}"
     cur.execute(s)
     fetchdata = cur.fetchall()
-    print(fetchdata)
+    print(f"fetchdata: {fetchdata}")
     cur.close()
+
     return render_template("User/car_details.html", fetchdata=fetchdata[0])
 
 
@@ -222,11 +233,11 @@ def wishlist():
         global name
         name = "yamete_kudasai"
         return redirect("/")
-    print(session['user_id'])
+    print(f"session['user_id']: {session['user_id']}")
     car_id = request.args.get('car_id')
     action = request.args.get('action')
-    print(car_id)
-    print(action)
+    print(f"car_id: {car_id}")
+    print(f"action: {action}")
     if action == "0":
         cur = mysql.connection.cursor()
         s1 = f"DELETE FROM car_ownership WHERE owner_cust_id = '{session['user_id']}' and owned_car_id = {car_id}"
@@ -249,9 +260,9 @@ def get_data():
     s = f"SELECT owned_car_id FROM car_ownership WHERE owner_cust_id = '{session['user_id']}'"
     cur.execute(s)
     fetchdata = cur.fetchall()
-    print(fetchdata)
+    print(f"fetchdata: {fetchdata}")
     cur.close()
-    var = []
+    lst = []  # list of car details
     for inner in fetchdata:
         for val in inner:
             cur = mysql.connection.cursor()
@@ -259,11 +270,11 @@ def get_data():
             cur.execute(s)
             fetchdata = cur.fetchall()
             fetchdata = fetchdata[0]
-            var.append(fetchdata)
-            print(fetchdata)
+            lst.append(fetchdata)
+            print(f"fetchdata: {fetchdata}")
             cur.close()
-    print(var)
-    return var
+    print(f"lst: {lst}")
+    return lst
 
 
 @app.route('/sales')
@@ -291,8 +302,8 @@ def appointments():
         app_id = gib_app_id_plz(session['user_id'], car_id, date)
         plz_push_all(app_id, date, time, emp_id, session['user_id'], car_id)
         print(date + " : " + time)
-        print(car_id)
-    print(session['user_id'])
+        print(f"car_id: {car_id}")
+    print(f"session['user_id']: {session['user_id']}")
     lst = gen_list_to_pass(session['user_id'])
     return render_template("User/Appointments.html", list=lst)
 
@@ -310,7 +321,7 @@ def gen_list_to_pass(cust_id):
     cur = mysql.connection.cursor()
     cur.execute(s)
     fetchdata = cur.fetchall()
-    print(fetchdata)
+    print(f"fetchdata: {fetchdata}")
     cur.close()
     return fetchdata
 
@@ -325,7 +336,7 @@ def plz_push_all(app_id, date, time, emp_id, cust_id, car_id):
 
 def gib_app_id_plz(cust_id, car_id, date):
     s = cust_id[:4] + "_" + car_id + date[-2:]
-    print(s)
+    print(f"s: {s}")
     return s
 
 
@@ -334,8 +345,7 @@ def stemmed(date):
     for ch in date:
         if ch == 'T':
             break
-        else:
-            s += ch
+        s += ch
     return s
 
 
@@ -343,7 +353,7 @@ def stem_time(date):
     s = ""
     flag = False
     for ch in date:
-        if flag == True:
+        if flag:
             s += ch
         if ch == 'T':
             flag = True
@@ -361,7 +371,7 @@ def get_emp_ids():
         lst.append(ele[0])
     length = len(lst)
     chosen = random.randint(0, length-1)
-    print(lst)
+    print(f"lst: {lst}")
     return lst[chosen]
 
 
