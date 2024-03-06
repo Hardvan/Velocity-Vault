@@ -138,9 +138,27 @@
                     </div>
 
                     <div class="d-flex flex-column mt-4">
-                      <button class="btn btn-primary btn-sm" type="button">
-                        Buy
-                      </button>
+                      <form action="/charge" method="post">
+                        <input
+                          type="hidden"
+                          name="car_id"
+                          value="{{ list[3] }}"
+                        />
+                        <input type="hidden" name="action" value="1" />
+                        <input
+                          type="hidden"
+                          name="final_price"
+                          value="{{ list[2] }}"
+                        />
+                        <script
+                          src="https://checkout.stripe.com/checkout.js"
+                          class="stripe-button"
+                          data-key="{{ key }}"
+                          data-description="A Flask Charge"
+                          data-amount="{{ list[2]*100 }}"
+                          data-locale="auto"
+                        ></script>
+                      </form>
 
                       <a
                         href="{{ url_for('wishlist', car_id = list[3], action = 0) }}"
