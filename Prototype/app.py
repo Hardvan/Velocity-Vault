@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, jsonify, redirect, session
 from QR_OCR_Generator import generate_customer_id
 from flask_mysqldb import MySQL
 from datetime import date
+import stripe
 import random
 
 
@@ -10,7 +11,15 @@ app.secret_key = 'lololol898989'
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
-app.config['MYSQL_DB'] = 'carshowroom'
+app.config['MYSQL_DB'] = 'car_showroom'
+
+#stripe api keys
+stripe_keys = {
+    "secret_key": "sk_test_51OqBUDSDxbyR6TDXKq1yk8FCTIRGukANTOgdCUyChhRf4YmoqubpGmDo0JSdxSkEMjxEklUIZECY61bRPzjlgFpD00yfhA9sr7",
+    "publishable_key": "pk_test_51OqBUDSDxbyR6TDXyVusFbV7IChPwvs8PzdP6AXt65JSi9gObEyC66XB33oKuf4UvXSgaIk9gB8TqDmKQLrnlfFY00opHauWOd",
+}
+
+stripe.api_key = stripe_keys["secret_key"]
 
 logged_in = False
 current_user_type = "blank"
@@ -158,7 +167,7 @@ def carDetails():
     cur.close()
     return render_template("User/car_details.html", fetchdata = fetchdata[0])
 
-@app.route('/wishlist')
+@app.route('/wishlist', methods = ['GET, POST'])
 def wishlist():
     if session['user_id'] == 0:
         alert = False
@@ -170,6 +179,9 @@ def wishlist():
     action = request.args.get('action')
     print(car_id)
     print(action)
+    if action == "1":
+        cur = mysql.connection.cursor()
+        
     if action == "0":
         cur = mysql.connection.cursor()
         str1 = "DELETE FROM car_ownership WHERE owner_cust_id = '{}' and owned_car_id = {}".format(session['user_id'], car_id)
