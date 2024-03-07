@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Stripe Payment</title>
+  </head>
+
+  <style type="text/css">
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+  </style>
+
+  <body>
+    <form action="/charge" method="post">
+      <article>
+        <label>
+          <span>Amount is $10.00</span>
+        </label>
+      </article>
+
+      <script
+        src="https://checkout.stripe.com/checkout.js"
+        class="stripe-button"
+        data-key="{{ key }}"
+        data-description="A Flask Charge"
+        data-amount="100"
+        data-locale="auto"
+      ></script>
+    </form>
+  </body>
+</html>

@@ -1,11 +1,13 @@
-from flask import Flask, render_template, request, jsonify, redirect, session
+from flask import Flask, render_template, request, jsonify, redirect, session, url_for
 from QR_OCR_Generator import generate_customer_id, generate_employee_id, save_qr_code
 from flask_mysqldb import MySQL
 from datetime import date
+import stripe
 import random
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 import base64
+import stripe
 
 import os
 from dotenv import load_dotenv
@@ -17,7 +19,7 @@ app.secret_key = 'lololol898989'
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
-app.config['MYSQL_DB'] = 'carshowroom'
+app.config['MYSQL_DB'] = 'car_showroom'
 
 logged_in = False  # ? True/False: User is logged in or not
 current_user_type = "blank"  # ? "customer"/"employee": Type of the current user
@@ -26,49 +28,56 @@ name = "none"  # ? "name": Name of the current user
 
 mysql = MySQL(app)
 
+stripe_keys = {
+    "secret_key": "sk_test_51OqBUDSDxbyR6TDXKq1yk8FCTIRGukANTOgdCUyChhRf4YmoqubpGmDo0JSdxSkEMjxEklUIZECY61bRPzjlgFpD00yfhA9sr7",
+    "publishable_key": "pk_test_51OqBUDSDxbyR6TDXyVusFbV7IChPwvs8PzdP6AXt65JSi9gObEyC66XB33oKuf4UvXSgaIk9gB8TqDmKQLrnlfFY00opHauWOd",
+}
 
-# Testing Parameters
-TEST_CONNECTION = True  # ? True/False: Test/Don't test the connection to MongoDB
-# ? True/False: Test/Don't test the CRUD operations for the QR codes
-TEST_CRUD_QR_CODE = True
+stripe.api_key = stripe_keys["secret_key"]
 
-# Define mongo_db and collection as placeholders
-mongo_db = None
-mongo_collection = None
 
-# MongoDB connection
-mongodb_uri = os.getenv("MONGODB_URI")
-client = MongoClient(mongodb_uri, server_api=ServerApi('1'))
+# # Testing Parameters
+# TEST_CONNECTION = True  # ? True/False: Test/Don't test the connection to MongoDB
+# # ? True/False: Test/Don't test the CRUD operations for the QR codes
+# TEST_CRUD_QR_CODE = True
 
-# Select the database and collection
-mongo_db = client['DBMS_db']
-mongo_collection = mongo_db['qr_codes']
+# # Define mongo_db and collection as placeholders
+# mongo_db = None
+# mongo_collection = None
 
-# Send a ping to confirm a successful connection
-if TEST_CONNECTION:
-    print("=== Testing MongoDB Connection ===")
+# # MongoDB connection
+# mongodb_uri = os.getenv("MONGODB_URI")
+# client = MongoClient(mongodb_uri, server_api=ServerApi('1'))
 
-    try:
-        client.admin.command('ping')
-        print("✅ Pinged your deployment. You successfully connected to MongoDB!")
-    except Exception as e:
-        print(e)
+# # Select the database and collection
+# mongo_db = client['DBMS_db']
+# mongo_collection = mongo_db['qr_codes']
 
-    # Add a sample document in the collection (don't add if already exists)
-    name = 'John Doe'
-    if mongo_collection.count_documents({'name': name}) == 0:
-        mongo_collection.insert_one({'name': name})
-        print("✅ Added a sample document in the collection.")
+# # Send a ping to confirm a successful connection
+# if TEST_CONNECTION:
+#     print("=== Testing MongoDB Connection ===")
 
-    # Retrieve the sample document added
-    result = mongo_collection.find_one({'name': name})
-    print(f"✅ Retrieved the sample document: {result}")
+#     try:
+#         client.admin.command('ping')
+#         print("✅ Pinged your deployment. You successfully connected to MongoDB!")
+#     except Exception as e:
+#         print(e)
 
-    # Delete the sample document added
-    mongo_collection.delete_one({'name': name})
-    print("✅ Deleted the sample document.")
+#     # Add a sample document in the collection (don't add if already exists)
+#     name = 'John Doe'
+#     if mongo_collection.count_documents({'name': name}) == 0:
+#         mongo_collection.insert_one({'name': name})
+#         print("✅ Added a sample document in the collection.")
 
-    print("=== MongoDB Connection Test Completed ===")
+#     # Retrieve the sample document added
+#     result = mongo_collection.find_one({'name': name})
+#     print(f"✅ Retrieved the sample document: {result}")
+
+#     # Delete the sample document added
+#     mongo_collection.delete_one({'name': name})
+#     print("✅ Deleted the sample document.")
+
+#     print("=== MongoDB Connection Test Completed ===")
 
 
 # HTML File variables
@@ -153,11 +162,11 @@ def custLogin():
             mysql.connection.commit()
             cur.close()
 
-            image_path = save_qr_code(
-                customer_id, user="C", folder="QR_ID_Customer")
+            # image_path = save_qr_code(
+            #     customer_id, user="C", folder="QR_ID_Customer")
 
             # Add the new QR code to the collection "qr_codes"
-            add_qr_code(customer_id, image_path, user="C")
+            # add_qr_code(customer_id, image_path, user="C")
 
             # Save the customer ID in the session
             current_user_id = customer_id
@@ -200,12 +209,14 @@ def custLogin():
         alert = False
 
     # Get QR code of the customer
-    qr_code = get_qr_code(current_user_id)
-    qr_image = qr_code['image']
+    #qr_code = get_qr_code(current_user_id)
+    #qr_image = qr_code['image']
+        
+    #, qr_image=qr_image
 
     return render_template(dashboard_html,
                            alert=alert, name="customer",
-                           action=action, logged_in=logged_in, qr_image=qr_image)
+                           action=action, logged_in=logged_in)
 
 
 @app.route('/employeeDashboard', methods=['GET', 'POST'])
@@ -271,7 +282,26 @@ def wishlist():
     print(f"car_id: {car_id}")
     print(f"action: {action}")
 
-    if action == "0":  # delete the car from the wishlist
+    if action == "1": # buy the car from the wishlist
+        lol = "lol"
+        
+        sale_date = date.today()
+        final_price = request.args.get('final_price')
+        payment_method = "visa"
+        sale_to_cust_id = session['user_id']
+        sale_by_emp_id = get_emp_who_sold(session['user_id'], car_id)
+        sale_involved_car_id = car_id
+        sale_id = gen_sale_id(session['user_id'], sale_involved_car_id, sale_by_emp_id)
+
+        cur = mysql.connection.cursor()
+        s2 = f"INSERT INTO sale VALUES('{sale_id}','{sale_date}',{final_price},'{payment_method}','{sale_to_cust_id}',{sale_by_emp_id},{sale_involved_car_id})"
+        s1 = f"DELETE FROM car_ownership WHERE owner_cust_id = '{session['user_id']}' and owned_car_id = {car_id}"
+        cur.execute(s1)
+        cur.execute(s2)
+        mysql.connection.commit()
+        cur.close()
+
+    elif action == "0":  # delete the car from the wishlist
         cur = mysql.connection.cursor()
         s1 = f"DELETE FROM car_ownership WHERE owner_cust_id = '{session['user_id']}' and owned_car_id = {car_id}"
         cur.execute(s1)
@@ -286,13 +316,65 @@ def wishlist():
         cur.close()
 
     data = get_data()
-    return render_template("User/wishlist.html", data=data)
+    return render_template("User/wishlist.html", data=data, key=stripe_keys['publishable_key'])
+
+
+def gen_sale_id(cust_id, car_id, emp_id):
+    str = ""
+    str = f"{cust_id[:4]}_{car_id}_{emp_id}_{date.today()}"
+    print(str)
+    return str
+
+def get_emp_who_sold(cust_id, car_id):
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT emp_ID FROM car_ownership where owner_cust_id = '{}' and owned_car_id = {}".format(cust_id, car_id))
+    fetchdata = cur.fetchall()
+    print(f"fetchdata: {fetchdata[0][0]}")
+    cur.close()
+    return fetchdata[0][0]
+
+@app.route('/charge', methods=['POST'])
+def charge():
+    # Amount in cents
+    amount = 1000
+
+    car_id = request.form['car_id']
+    final_price = request.form['final_price']
+    action = request.form['action']
+
+    str = f"{session['user_id']}_{final_price}"
+
+    customer = stripe.Customer.create(
+        email="karan@gmail.com",
+        source=request.form['stripeToken']
+    )
+
+    stripe.PaymentIntent.create(
+        amount=1000,
+        currency="inr"
+    )
+
+    
+
+    return redirect(url_for('wishlist', car_id=car_id, action=action, final_price=final_price))
+
 
 
 @app.route('/sales')
 def sales():
-    return render_template("User/sales.html")
+    emp_id = session['user_id']
+    data = get_sale_data(emp_id)
+    return render_template("User/sales.html", data = data)
 
+def get_sale_data(emp_id):
+    cur = mysql.connection.cursor()
+    str = f"SELECT car_name, Name, final_price, sale_date, payment_method, image_link FROM sale INNER JOIN customer ON sale_to_cust_id = customer_ID INNER JOIN car_features ON sale_involved_car_id = car_ID WHERE sale_by_emp_id = {emp_id}"
+    #f"SELECT car_name, Name, final_price, sale_date, payment_method FROM sale AS s, customer AS c, car_features AS r WHERE s.sale_by_emp_id = {emp_id} AND s.sale_to_cust_id = c.customer_ID AND s.sale_involved_car_id"
+    cur.execute(str)
+    fetchdata = cur.fetchall()
+    print(f"fetchdata: {fetchdata}")
+    cur.close()
+    return fetchdata
 
 @app.route('/appointments', methods=['GET', 'POST'])
 def appointments():
@@ -477,120 +559,120 @@ def get_emp_ids():
     return emp_ids[chosen]
 
 
-def save_qr_image(base64_img, image_path):
-    """Saves the base64 image to a file.
+# def save_qr_image(base64_img, image_path):
+#     """Saves the base64 image to a file.
 
-    Args:
-        base64_img (str): The base64 image.
-        image_path (str): The path to save the image.
-    """
+#     Args:
+#         base64_img (str): The base64 image.
+#         image_path (str): The path to save the image.
+#     """
 
-    # Convert the base64 image to bytes
-    img_bytes = base64.b64decode(base64_img)
+#     # Convert the base64 image to bytes
+#     img_bytes = base64.b64decode(base64_img)
 
-    # Save the image to a file
-    with open(image_path, "wb") as img_file:
-        img_file.write(img_bytes)
-    print(f"✅ Saved the QR code to: {image_path}")
+#     # Save the image to a file
+#     with open(image_path, "wb") as img_file:
+#         img_file.write(img_bytes)
+#     print(f"✅ Saved the QR code to: {image_path}")
 
 
 # ? CRUD operations for the QR codes
 # * Create
-def add_qr_code(user_id, image_path, user):
-    """Converts the image into base64 and adds a new QR code to the collection "qr_codes".
+# def add_qr_code(user_id, image_path, user):
+#     """Converts the image into base64 and adds a new QR code to the collection "qr_codes".
 
-    Args:
-        user_id (str): The user ID of the QR code.
-        image_path (str): The path of the image.
-        user (str): The type of user. Either 'E' for employee or 'C' for customer.
-    """
+#     Args:
+#         user_id (str): The user ID of the QR code.
+#         image_path (str): The path of the image.
+#         user (str): The type of user. Either 'E' for employee or 'C' for customer.
+#     """
 
-    # Convert the image into base64
-    with open(image_path, "rb") as img_file:
-        base64_img = base64.b64encode(img_file.read()).decode('utf-8')
+#     # Convert the image into base64
+#     with open(image_path, "rb") as img_file:
+#         base64_img = base64.b64encode(img_file.read()).decode('utf-8')
 
-    # Add the new QR code to the collection
-    mongo_collection.insert_one({'user_id': user_id,
-                                 'image': base64_img,
-                                 'user': user})
+#     # Add the new QR code to the collection
+#     mongo_collection.insert_one({'user_id': user_id,
+#                                  'image': base64_img,
+#                                  'user': user})
 
-    print(f"✅ Added a new QR code for {user} with user ID: {user_id}")
+#     print(f"✅ Added a new QR code for {user} with user ID: {user_id}")
 
 
 # * Read
-def get_qr_code(user_id):
-    """Retrieves the QR code from the collection "qr_codes".
+# def get_qr_code(user_id):
+#     """Retrieves the QR code from the collection "qr_codes".
 
-    Args:
-        user_id (str): The user ID of the QR code.
+#     Args:
+#         user_id (str): The user ID of the QR code.
 
-    Returns:
-        dict: The retrieved QR code.
-            Structure: {'user_id': str, 'image': str, 'user': str}
-    """
+#     Returns:
+#         dict: The retrieved QR code.
+#             Structure: {'user_id': str, 'image': str, 'user': str}
+#     """
 
-    # Retrieve the QR code from the collection
-    qr_code = mongo_collection.find_one({'user_id': user_id})
-    print(f"✅ Retrieved the QR code for user ID: {user_id}")
-    return qr_code
+#     # Retrieve the QR code from the collection
+#     qr_code = mongo_collection.find_one({'user_id': user_id})
+#     print(f"✅ Retrieved the QR code for user ID: {user_id}")
+#     return qr_code
 
 
 # * Update
-def update_qr_code(user_id, image_path):
-    """Converts the image into base64 and updates the QR code in the collection "qr_codes".
+# def update_qr_code(user_id, image_path):
+#     """Converts the image into base64 and updates the QR code in the collection "qr_codes".
 
-    Args:
-        user_id (str): The user ID of the QR code.
-        image_path (str): The path of the image.
-    """
+#     Args:
+#         user_id (str): The user ID of the QR code.
+#         image_path (str): The path of the image.
+#     """
 
-    # Convert the image into base64
-    with open(image_path, "rb") as img_file:
-        base64_img = base64.b64encode(img_file.read()).decode('utf-8')
+#     # Convert the image into base64
+#     with open(image_path, "rb") as img_file:
+#         base64_img = base64.b64encode(img_file.read()).decode('utf-8')
 
-    # Update the QR code in the collection
-    mongo_collection.update_one({'user_id': user_id},
-                                {'$set': {'image': base64_img}})
-    print(f"✅ Updated the QR code for user ID: {user_id}")
+#     # Update the QR code in the collection
+#     mongo_collection.update_one({'user_id': user_id},
+#                                 {'$set': {'image': base64_img}})
+#     print(f"✅ Updated the QR code for user ID: {user_id}")
 
 
 # * Delete
-def delete_qr_code(user_id):
-    """Deletes the QR code from the collection "qr_codes".
+# def delete_qr_code(user_id):
+#     """Deletes the QR code from the collection "qr_codes".
 
-    Args:
-        user_id (str): The user ID of the QR code.
-    """
+#     Args:
+#         user_id (str): The user ID of the QR code.
+#     """
 
-    # Delete the QR code from the collection
-    mongo_collection.delete_one({'user_id': user_id})
-    print(f"✅ Deleted the QR code for user ID: {user_id}")
+#     # Delete the QR code from the collection
+#     mongo_collection.delete_one({'user_id': user_id})
+#     print(f"✅ Deleted the QR code for user ID: {user_id}")
 
 
-if TEST_CRUD_QR_CODE:
+# if TEST_CRUD_QR_CODE:
 
-    print("=== Testing CRUD Operations for QR Codes ===")
+#     print("=== Testing CRUD Operations for QR Codes ===")
 
-    user_id = 'charlie_3210_2757'
-    image_path = './QR_ID_Customer/charlie_3210_2757.png'
+#     user_id = 'charlie_3210_2757'
+#     image_path = './QR_ID_Customer/charlie_3210_2757.png'
 
-    # Create
-    add_qr_code(user_id, image_path, 'C')
+#     # Create
+#     add_qr_code(user_id, image_path, 'C')
 
-    # Read
-    qr_code = get_qr_code(user_id)
-    print("Retrieved data:\n")
-    print(f"User ID: {qr_code['user_id']}")
-    print(f"User: {qr_code['user']}")
-    save_qr_image(qr_code['image'], user_id + "_retrieved.png")
+#     # Read
+#     qr_code = get_qr_code(user_id)
+#     print("Retrieved data:\n")
+#     print(f"User ID: {qr_code['user_id']}")
+#     print(f"User: {qr_code['user']}")
+#     save_qr_image(qr_code['image'], user_id + "_retrieved.png")
 
-    # Update
-    update_qr_code(user_id, image_path)
+#     # Update
+#     update_qr_code(user_id, image_path)
 
-    # Delete
-    delete_qr_code(user_id)
+#     # Delete
+#     delete_qr_code(user_id)
 
-    print("=== CRUD Operations for QR Codes Test Completed ===")
+#     print("=== CRUD Operations for QR Codes Test Completed ===")
 
 
 if __name__ == "__main__":
