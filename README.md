@@ -9,6 +9,7 @@ This repository contains the documents/source code associated with the Next Gen 
 | 1.  | [Synopsis](./1_Synopsis/)         |
 | 2.  | [Software Requirements](./2_SRS/) |
 | 3.  | [ER Diagram](./3_ER_diagram/)     |
+| 4.  | [DFD](./4_DFD/)                   |
 | 5.  | [Prototype](./Prototype/)         |
 
 ## Prototype
