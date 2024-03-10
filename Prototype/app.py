@@ -10,6 +10,7 @@ import stripe
 
 # Custom modules
 from QR_OCR_Generator import generate_customer_id, generate_employee_id, save_qr_code
+from CRUD_QR import add_qr_code, get_qr_code, update_qr_code, delete_qr_code
 from HuggingFace import sentiment_analysis, summarize_text
 
 
@@ -100,79 +101,6 @@ def save_qr_image(base64_img, image_path):
     print(f"✅ Saved the QR code to: {image_path}")
 
 
-# ? CRUD operations for the QR codes
-# * Create
-def add_qr_code(user_id, image_path, user):
-    """Converts the image into base64 and adds a new QR code to the collection "qr_codes".
-
-    Args:
-        user_id (str): The user ID of the QR code.
-        image_path (str): The path of the image.
-        user (str): The type of user. Either 'E' for employee or 'C' for customer.
-    """
-
-    # Convert the image into base64
-    with open(image_path, "rb") as img_file:
-        base64_img = base64.b64encode(img_file.read()).decode('utf-8')
-
-    # Add the new QR code to the collection
-    mongo_collection.insert_one({'user_id': user_id,
-                                 'image': base64_img,
-                                 'user': user})
-
-    print(f"✅ Added a new QR code for {user} with user ID: {user_id}")
-
-
-# * Read
-def get_qr_code(user_id):
-    """Retrieves the QR code from the collection "qr_codes".
-
-    Args:
-        user_id (str): The user ID of the QR code.
-
-    Returns:
-        dict: The retrieved QR code.
-            Structure: {'user_id': str, 'image': str, 'user': str}
-    """
-
-    # Retrieve the QR code from the collection
-    qr_code = mongo_collection.find_one({'user_id': user_id})
-    print(f"✅ Retrieved the QR code for user ID: {user_id}")
-    return qr_code
-
-
-# * Update
-def update_qr_code(user_id, image_path):
-    """Converts the image into base64 and updates the QR code in the collection "qr_codes".
-
-    Args:
-        user_id (str): The user ID of the QR code.
-        image_path (str): The path of the image.
-    """
-
-    # Convert the image into base64
-    with open(image_path, "rb") as img_file:
-        base64_img = base64.b64encode(img_file.read()).decode('utf-8')
-
-    # Update the QR code in the collection
-    mongo_collection.update_one({'user_id': user_id},
-                                {'$set': {'image': base64_img}})
-    print(f"✅ Updated the QR code for user ID: {user_id}")
-
-
-# * Delete
-def delete_qr_code(user_id):
-    """Deletes the QR code from the collection "qr_codes".
-
-    Args:
-        user_id (str): The user ID of the QR code.
-    """
-
-    # Delete the QR code from the collection
-    mongo_collection.delete_one({'user_id': user_id})
-    print(f"✅ Deleted the QR code for user ID: {user_id}")
-
-
 if TEST_CRUD_QR_CODE:
 
     print("=== Testing CRUD Operations for QR Codes ===")
@@ -181,20 +109,20 @@ if TEST_CRUD_QR_CODE:
     image_path = './QR_ID_Customer/charlie_3210_2757.png'
 
     # Create
-    add_qr_code(user_id, image_path, 'C')
+    add_qr_code(user_id, image_path, 'C', mongo_collection)
 
     # Read
-    qr_code = get_qr_code(user_id)
+    qr_code = get_qr_code(user_id, mongo_collection)
     print("Retrieved data:\n")
     print(f"User ID: {qr_code['user_id']}")
     print(f"User: {qr_code['user']}")
     save_qr_image(qr_code['image'], user_id + "_retrieved.png")
 
     # Update
-    update_qr_code(user_id, image_path)
+    update_qr_code(user_id, image_path, mongo_collection)
 
     # Delete
-    delete_qr_code(user_id)
+    delete_qr_code(user_id, mongo_collection)
 
     print("=== CRUD Operations for QR Codes Test Completed ===")
 
@@ -320,7 +248,7 @@ def custLogin():
                 customer_id, user="C", folder="QR_ID_Customer")
 
             # Add the new QR code to the collection "qr_codes"
-            add_qr_code(customer_id, image_path, user="C")
+            add_qr_code(customer_id, image_path, "C", mongo_collection)
 
             # Save the customer ID in the session
             current_user_id = customer_id
@@ -361,7 +289,7 @@ def custLogin():
         alert = False
 
     # Get QR code of the customer
-    qr_code = get_qr_code(current_user_id)
+    qr_code = get_qr_code(current_user_id, mongo_collection)
     qr_image = qr_code['image']
 
     return render_template(dashboard_html,
