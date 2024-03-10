@@ -20,12 +20,15 @@ load_dotenv()
 
 
 app = Flask(__name__)
+
+# SQL Configuration
 app.secret_key = 'lololol898989'
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
 app.config['MYSQL_DB'] = 'carshowroom'
 
+# User variables
 logged_in = False  # ? True/False: User is logged in or not
 current_user_type = "blank"  # ? "customer"/"employee": Type of the current user
 customer_id = "none"  # ? "customer_id": ID of the current customer
@@ -177,6 +180,7 @@ def write_query(query):
 # /collections: Displays the collection of cars
 # /carDetails: Displays the details of a car
 # /wishlist: Displays the wishlist of the user
+# /charge: Charges the user for the car
 # /sales: Displays the sales page
 # /appointments: Displays the appointments page
 
@@ -584,5 +588,4 @@ def get_emp_ids():
 
 
 if __name__ == "__main__":
-    # test_connection()
     app.run(debug=True)
