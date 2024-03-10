@@ -19,7 +19,7 @@ app.secret_key = 'lololol898989'
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
-app.config['MYSQL_DB'] = 'car_showroom'
+app.config['MYSQL_DB'] = 'carshowroom'
 
 logged_in = False  # ? True/False: User is logged in or not
 current_user_type = "blank"  # ? "customer"/"employee": Type of the current user
@@ -162,11 +162,12 @@ def custLogin():
             mysql.connection.commit()
             cur.close()
 
-            # image_path = save_qr_code(
-            #     customer_id, user="C", folder="QR_ID_Customer")
+            # Create the QR code of the customer
+            image_path = save_qr_code(
+                customer_id, user="C", folder="QR_ID_Customer")
 
             # Add the new QR code to the collection "qr_codes"
-            # add_qr_code(customer_id, image_path, user="C")
+            add_qr_code(customer_id, image_path, user="C")
 
             # Save the customer ID in the session
             current_user_id = customer_id
@@ -180,14 +181,12 @@ def custLogin():
             email = request.form['email']
             password = request.form['pass']
 
-            # TODO: Add option of logging in with QR code
-
             alert = True
             action = "login"
 
             # Check if the customer exists in the "customer" table
             exists, customer_id = customerExists(email, password)
-            if (not exists):
+            if not exists:
                 logged_in = False
                 alert = False
                 return render_template(dashboard_html,
@@ -209,14 +208,12 @@ def custLogin():
         alert = False
 
     # Get QR code of the customer
-    #qr_code = get_qr_code(current_user_id)
-    #qr_image = qr_code['image']
-        
-    #, qr_image=qr_image
+    qr_code = get_qr_code(current_user_id)
+    qr_image = qr_code['image']
 
     return render_template(dashboard_html,
                            alert=alert, name="customer",
-                           action=action, logged_in=logged_in)
+                           action=action, logged_in=logged_in, qr_image=qr_image)
 
 
 @app.route('/employeeDashboard', methods=['GET', 'POST'])
@@ -282,16 +279,15 @@ def wishlist():
     print(f"car_id: {car_id}")
     print(f"action: {action}")
 
-    if action == "1": # buy the car from the wishlist
-        lol = "lol"
-        
+    if action == "1":  # buy the car from the wishlist
         sale_date = date.today()
         final_price = request.args.get('final_price')
         payment_method = "visa"
         sale_to_cust_id = session['user_id']
         sale_by_emp_id = get_emp_who_sold(session['user_id'], car_id)
         sale_involved_car_id = car_id
-        sale_id = gen_sale_id(session['user_id'], sale_involved_car_id, sale_by_emp_id)
+        sale_id = gen_sale_id(session['user_id'],
+                              sale_involved_car_id, sale_by_emp_id)
 
         cur = mysql.connection.cursor()
         s2 = f"INSERT INTO sale VALUES('{sale_id}','{sale_date}',{final_price},'{payment_method}','{sale_to_cust_id}',{sale_by_emp_id},{sale_involved_car_id})"
@@ -315,23 +311,27 @@ def wishlist():
         mysql.connection.commit()
         cur.close()
 
-    data = get_data()
+    data = get_wishlist_data()
     return render_template("User/wishlist.html", data=data, key=stripe_keys['publishable_key'])
 
 
 def gen_sale_id(cust_id, car_id, emp_id):
-    str = ""
-    str = f"{cust_id[:4]}_{car_id}_{emp_id}_{date.today()}"
-    print(str)
-    return str
+    sale_id = f"{cust_id[:4]}_{car_id}_{emp_id}_{date.today()}"
+    print(f"sale_id: {sale_id}")
+    return sale_id
+
 
 def get_emp_who_sold(cust_id, car_id):
     cur = mysql.connection.cursor()
-    cur.execute("SELECT emp_ID FROM car_ownership where owner_cust_id = '{}' and owned_car_id = {}".format(cust_id, car_id))
+    cur.execute(
+        f"SELECT emp_ID FROM car_ownership where owner_cust_id = '{cust_id}' and owned_car_id = {car_id}")
     fetchdata = cur.fetchall()
     print(f"fetchdata: {fetchdata[0][0]}")
     cur.close()
-    return fetchdata[0][0]
+
+    emp_id = fetchdata[0][0]
+    return emp_id
+
 
 @app.route('/charge', methods=['POST'])
 def charge():
@@ -342,7 +342,7 @@ def charge():
     final_price = request.form['final_price']
     action = request.form['action']
 
-    str = f"{session['user_id']}_{final_price}"
+    s = f"{session['user_id']}_{final_price}"
 
     customer = stripe.Customer.create(
         email="karan@gmail.com",
@@ -354,27 +354,27 @@ def charge():
         currency="inr"
     )
 
-    
-
     return redirect(url_for('wishlist', car_id=car_id, action=action, final_price=final_price))
-
 
 
 @app.route('/sales')
 def sales():
     emp_id = session['user_id']
     data = get_sale_data(emp_id)
-    return render_template("User/sales.html", data = data)
+    return render_template("User/sales.html", data=data)
+
 
 def get_sale_data(emp_id):
     cur = mysql.connection.cursor()
-    str = f"SELECT car_name, Name, final_price, sale_date, payment_method, image_link FROM sale INNER JOIN customer ON sale_to_cust_id = customer_ID INNER JOIN car_features ON sale_involved_car_id = car_ID WHERE sale_by_emp_id = {emp_id}"
-    #f"SELECT car_name, Name, final_price, sale_date, payment_method FROM sale AS s, customer AS c, car_features AS r WHERE s.sale_by_emp_id = {emp_id} AND s.sale_to_cust_id = c.customer_ID AND s.sale_involved_car_id"
-    cur.execute(str)
+    s = f"SELECT car_name, Name, final_price, sale_date, payment_method, image_link FROM sale INNER JOIN customer ON sale_to_cust_id = customer_ID INNER JOIN car_features ON sale_involved_car_id = car_ID WHERE sale_by_emp_id = {emp_id}"
+    # f"SELECT car_name, Name, final_price, sale_date, payment_method FROM sale AS s, customer AS c, car_features AS r WHERE s.sale_by_emp_id = {emp_id} AND s.sale_to_cust_id = c.customer_ID AND s.sale_involved_car_id"
+    cur.execute(s)
     fetchdata = cur.fetchall()
     print(f"fetchdata: {fetchdata}")
     cur.close()
+
     return fetchdata
+
 
 @app.route('/appointments', methods=['GET', 'POST'])
 def appointments():
@@ -403,17 +403,18 @@ def appointments():
 
     print(f"session['user_id']: {session['user_id']}")
     appointments_list = get_appointments(session['user_id'])
+
     return render_template("User/Appointments.html", list=appointments_list)
 
 
 def get_car_data():
-
     # Fetch the details of all the cars from the "car_features" table
     cur = mysql.connection.cursor()
     cur.execute("SELECT * FROM car_features")
     fetchdata = cur.fetchall()
     print(f"fetchdata: {fetchdata}")
     cur.close()
+
     return fetchdata
 
 
@@ -454,7 +455,7 @@ def get_empid(email, password):
     return emp_id
 
 
-def get_data():
+def get_wishlist_data():
 
     # Fetch the details of all the cars in the wishlist from the "car_ownership" table
     cur = mysql.connection.cursor()
@@ -483,7 +484,6 @@ def get_data():
 
 
 def delete_entry(app_id):
-
     # Delete the appointment from the "appointment" table
     cur = mysql.connection.cursor()
     s = f"DELETE FROM appointment WHERE app_ID = '{app_id}'"
@@ -493,7 +493,6 @@ def delete_entry(app_id):
 
 
 def get_appointments(cust_id):
-
     # Generate the list of appointments to pass to the HTML file
     s = f"SELECT Date, Time, Name, car_name, image_link, app_ID FROM appointment INNER JOIN car_features ON   appointment.Appointment_for_car_id = car_features.car_ID INNER JOIN employee ON appointment.handling_emp_id = employee.emp_ID WHERE appointment.booking_cust_id = '{cust_id}'"
     cur = mysql.connection.cursor()
@@ -501,11 +500,11 @@ def get_appointments(cust_id):
     fetchdata = cur.fetchall()
     print(f"fetchdata: {fetchdata}")
     cur.close()
+
     return fetchdata
 
 
 def create_appointment(app_id, date, time, emp_id, cust_id, car_id):
-
     # Insert the new appointment into the "appointment" table
     cur = mysql.connection.cursor()
     s2 = f"INSERT INTO appointment VALUES('{app_id}','{date}','{time}',{emp_id},'{cust_id}',{car_id})"
@@ -515,7 +514,6 @@ def create_appointment(app_id, date, time, emp_id, cust_id, car_id):
 
 
 def generate_app_id(cust_id, car_id, date):
-
     # Generate the appointment ID
     app_id = cust_id[:4] + "_" + car_id + date[-2:]
     print(f"app_id: {app_id}")
@@ -545,7 +543,6 @@ def stem_time(date):
 
 
 def get_emp_ids():
-
     # Fetch the employee IDs from the "employee" table
     cur = mysql.connection.cursor()
     s = "SELECT emp_ID FROM employee"
