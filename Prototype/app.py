@@ -84,6 +84,44 @@ if TEST_CONNECTION:
 dashboard_html = "User/dashboard.html"
 
 
+# SQL Functions
+def read_query(query):
+    """Executes a SELECT query on the database.
+    This function greatly simplifies the process of executing a query
+    by reducing the no. of lines of code required and improving readability.
+
+    Args
+    ----
+    - query (str): The SQL query to execute.
+
+    Returns
+    -------
+    - list: The result of the query
+    """
+
+    cur = mysql.connection.cursor()
+    cur.execute(query)
+    result = cur.fetchall()
+    cur.close()
+    return result
+
+
+def write_query(query):
+    """Executes a INSERT/DELETE/UPDATE query on the database.
+    This function greatly simplifies the process of executing a query
+    by reducing the no. of lines of code required and improving readability.
+
+    Args
+    ----
+    - query (str): The SQL query to execute.
+    """
+
+    cur = mysql.connection.cursor()
+    cur.execute(query)
+    mysql.connection.commit()
+    cur.close()
+
+
 # ? Routes
 # /: Main dashboard of the website
 # /index: Displays various cars available in the showroom
@@ -155,12 +193,8 @@ def custLogin():
             print(f"date.today(): {date.today()}")
 
             # Insert the new customer into the "customer" table
-            cur = mysql.connection.cursor()
-            str_customer = f"INSERT INTO customer VALUES('{customer_id}','{name}', {age}, {phone}, '{email}', '{date.today()}', '{password}')"
-            print(f"str_customer: {str_customer}")
-            cur.execute(str_customer)
-            mysql.connection.commit()
-            cur.close()
+            write_query(
+                f"INSERT INTO customer VALUES('{customer_id}','{name}', {age}, {phone}, '{email}', '{date.today()}', '{password}')")
 
             # Create the QR code of the customer
             image_path = save_qr_code(
@@ -253,11 +287,7 @@ def carDetails():
     print(f"data: {data}")
 
     # Fetch the details of the selected car from "car_features" table
-    cur = mysql.connection.cursor()
-    s = f"SELECT * FROM car_features WHERE car_ID = {data}"
-    cur.execute(s)
-    fetchdata = cur.fetchall()
-    cur.close()
+    fetchdata = read_query(f"SELECT * FROM car_features WHERE car_ID = {data}")
 
     car_details = fetchdata[0]  # first car's details
     print(f"car_details: {car_details}")
@@ -289,27 +319,18 @@ def wishlist():
         sale_id = gen_sale_id(session['user_id'],
                               sale_involved_car_id, sale_by_emp_id)
 
-        cur = mysql.connection.cursor()
-        s2 = f"INSERT INTO sale VALUES('{sale_id}','{sale_date}',{final_price},'{payment_method}','{sale_to_cust_id}',{sale_by_emp_id},{sale_involved_car_id})"
-        s1 = f"DELETE FROM car_ownership WHERE owner_cust_id = '{session['user_id']}' and owned_car_id = {car_id}"
-        cur.execute(s1)
-        cur.execute(s2)
-        mysql.connection.commit()
-        cur.close()
+        write_query(
+            f"DELETE FROM car_ownership WHERE owner_cust_id = '{session['user_id']}' and owned_car_id = {car_id}")
+        write_query(
+            f"INSERT INTO sale VALUES('{sale_id}','{sale_date}',{final_price},'{payment_method}','{sale_to_cust_id}',{sale_by_emp_id},{sale_involved_car_id})")
 
     elif action == "0":  # delete the car from the wishlist
-        cur = mysql.connection.cursor()
-        s1 = f"DELETE FROM car_ownership WHERE owner_cust_id = '{session['user_id']}' and owned_car_id = {car_id}"
-        cur.execute(s1)
-        mysql.connection.commit()
-        cur.close()
+        write_query(
+            f"DELETE FROM car_ownership WHERE owner_cust_id = '{session['user_id']}' and owned_car_id = {car_id}")
     elif car_id != None:  # add the car to the wishlist
         assign_emp_id = get_emp_ids()
-        cur = mysql.connection.cursor()
-        s2 = f"INSERT INTO car_ownership VALUES('{session['user_id']}',{car_id},{assign_emp_id})"
-        cur.execute(s2)
-        mysql.connection.commit()
-        cur.close()
+        write_query(
+            f"INSERT INTO car_ownership VALUES('{session['user_id']}',{car_id},{assign_emp_id})")
 
     data = get_wishlist_data()
     return render_template("User/wishlist.html", data=data, key=stripe_keys['publishable_key'])
@@ -322,12 +343,8 @@ def gen_sale_id(cust_id, car_id, emp_id):
 
 
 def get_emp_who_sold(cust_id, car_id):
-    cur = mysql.connection.cursor()
-    cur.execute(
+    fetchdata = read_query(
         f"SELECT emp_ID FROM car_ownership where owner_cust_id = '{cust_id}' and owned_car_id = {car_id}")
-    fetchdata = cur.fetchall()
-    print(f"fetchdata: {fetchdata[0][0]}")
-    cur.close()
 
     emp_id = fetchdata[0][0]
     return emp_id
@@ -365,13 +382,8 @@ def sales():
 
 
 def get_sale_data(emp_id):
-    cur = mysql.connection.cursor()
-    s = f"SELECT car_name, Name, final_price, sale_date, payment_method, image_link FROM sale INNER JOIN customer ON sale_to_cust_id = customer_ID INNER JOIN car_features ON sale_involved_car_id = car_ID WHERE sale_by_emp_id = {emp_id}"
-    # f"SELECT car_name, Name, final_price, sale_date, payment_method FROM sale AS s, customer AS c, car_features AS r WHERE s.sale_by_emp_id = {emp_id} AND s.sale_to_cust_id = c.customer_ID AND s.sale_involved_car_id"
-    cur.execute(s)
-    fetchdata = cur.fetchall()
-    print(f"fetchdata: {fetchdata}")
-    cur.close()
+    fetchdata = read_query(
+        f"SELECT car_name, Name, final_price, sale_date, payment_method, image_link FROM sale INNER JOIN customer ON sale_to_cust_id = customer_ID INNER JOIN car_features ON sale_involved_car_id = car_ID WHERE sale_by_emp_id = {emp_id}")
 
     return fetchdata
 
@@ -409,13 +421,7 @@ def appointments():
 
 def get_car_data():
     # Fetch the details of all the cars from the "car_features" table
-    cur = mysql.connection.cursor()
-    cur.execute("SELECT * FROM car_features")
-    fetchdata = cur.fetchall()
-    print(f"fetchdata: {fetchdata}")
-    cur.close()
-
-    return fetchdata
+    return read_query("SELECT * FROM car_features")
 
 
 def customerExists(email, password):
@@ -429,22 +435,18 @@ def customerExists(email, password):
         bool: True if the customer exists, False otherwise.
         str: The customer's ID if they exist, None otherwise.
     """
-    cur = mysql.connection.cursor()
-    str_check_customer = f"SELECT customer_ID from customer where Password = '{password}' and Email = '{email}'"
-    cur.execute(str_check_customer)
-    customer_id = cur.fetchall()
-    cur.close()
+
+    customer_id = read_query(
+        f"SELECT customer_ID from customer where Password = '{password}' and Email = '{email}'")
+
     return bool(customer_id), customer_id
 
 
 def get_empid(email, password):
 
     # Check if the employee exists in the "employee" table
-    cur = mysql.connection.cursor()
-    s = f"SELECT emp_ID FROM employee WHERE Name = '{email}' and password = '{password}'"
-    cur.execute(s)
-    fetchdata = cur.fetchall()
-    cur.close()
+    fetchdata = read_query(
+        f"SELECT emp_ID FROM employee WHERE Name = '{email}' and password = '{password}'")
 
     if fetchdata == ():  # no such employee
         return None
@@ -458,26 +460,19 @@ def get_empid(email, password):
 def get_wishlist_data():
 
     # Fetch the details of all the cars in the wishlist from the "car_ownership" table
-    cur = mysql.connection.cursor()
-    s = f"SELECT owned_car_id FROM car_ownership WHERE owner_cust_id = '{session['user_id']}'"
-    cur.execute(s)
-    fetchdata = cur.fetchall()
-    print(f"fetchdata: {fetchdata}")
-    cur.close()
+    fetchdata = read_query(
+        f"SELECT owned_car_id FROM car_ownership WHERE owner_cust_id = '{session['user_id']}'")
 
     car_details = []  # list of car details
     for car in fetchdata:  # each car in the wishlist
         for car_id in car:  # each car's ID
 
             # Fetch the details of the car from the "car_features" table
-            cur = mysql.connection.cursor()
-            s = f"SELECT car_name, image_link, price, car_ID FROM car_features WHERE car_ID = {car_id}"
-            cur.execute(s)
-            fetchdata = cur.fetchall()
+            fetchdata = read_query(
+                f"SELECT car_name, image_link, price, car_ID FROM car_features WHERE car_ID = {car_id}")
+
             fetchdata = fetchdata[0]
             car_details.append(fetchdata)
-            print(f"fetchdata: {fetchdata}")
-            cur.close()
 
     print(f"car_details: {car_details}")
     return car_details
@@ -485,32 +480,19 @@ def get_wishlist_data():
 
 def delete_entry(app_id):
     # Delete the appointment from the "appointment" table
-    cur = mysql.connection.cursor()
-    s = f"DELETE FROM appointment WHERE app_ID = '{app_id}'"
-    cur.execute(s)
-    mysql.connection.commit()
-    cur.close()
+    write_query(f"DELETE FROM appointment WHERE app_ID = '{app_id}'")
 
 
 def get_appointments(cust_id):
     # Generate the list of appointments to pass to the HTML file
-    s = f"SELECT Date, Time, Name, car_name, image_link, app_ID FROM appointment INNER JOIN car_features ON   appointment.Appointment_for_car_id = car_features.car_ID INNER JOIN employee ON appointment.handling_emp_id = employee.emp_ID WHERE appointment.booking_cust_id = '{cust_id}'"
-    cur = mysql.connection.cursor()
-    cur.execute(s)
-    fetchdata = cur.fetchall()
-    print(f"fetchdata: {fetchdata}")
-    cur.close()
 
-    return fetchdata
+    return read_query(f"SELECT Date, Time, Name, car_name, image_link, app_ID FROM appointment INNER JOIN car_features ON   appointment.Appointment_for_car_id = car_features.car_ID INNER JOIN employee ON appointment.handling_emp_id = employee.emp_ID WHERE appointment.booking_cust_id = '{cust_id}'")
 
 
 def create_appointment(app_id, date, time, emp_id, cust_id, car_id):
     # Insert the new appointment into the "appointment" table
-    cur = mysql.connection.cursor()
-    s2 = f"INSERT INTO appointment VALUES('{app_id}','{date}','{time}',{emp_id},'{cust_id}',{car_id})"
-    cur.execute(s2)
-    mysql.connection.commit()
-    cur.close()
+    write_query(
+        f"INSERT INTO appointment VALUES('{app_id}','{date}','{time}',{emp_id},'{cust_id}',{car_id})")
 
 
 def generate_app_id(cust_id, car_id, date):
@@ -544,11 +526,7 @@ def stem_time(date):
 
 def get_emp_ids():
     # Fetch the employee IDs from the "employee" table
-    cur = mysql.connection.cursor()
-    s = "SELECT emp_ID FROM employee"
-    cur.execute(s)
-    fetchdata = cur.fetchall()
-    cur.close()
+    fetchdata = read_query("SELECT emp_ID FROM employee")
 
     emp_ids = [e[0] for e in fetchdata]
     print(f"emp_ids: {emp_ids}")
