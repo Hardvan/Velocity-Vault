@@ -223,7 +223,9 @@
                       padding-bottom: 2%;
                     "
                   >
-                    <a href="">
+                    <a
+                      href="{{ url_for('enter_review', emp_id = data[5], car_id = data[3]) }}"
+                    >
                       <button
                         class="btn btn-outline-primary btn-sm mt-2"
                         type="button"

@@ -35,7 +35,7 @@
       rel="stylesheet"
     />
   </head>
-  <body style="background-color: rgb(29, 27, 27)">
+  <body style="background-color: rgb(29, 27, 27); color: white">
     <!-- Navbar -->
     <nav
       class="navbar navbar-expand-lg navbar-light fixed-top text-success"
@@ -43,7 +43,7 @@
     >
       <div class="container-fluid">
         <!-- Navbar brand -->
-        <a class="navbar-brand" href="/">
+        <a class="navbar-brand" target="_blank" href="/index">
           <img
             src="{{ url_for('static', filename = 'images/logo.png') }}"
             height="16"
@@ -71,63 +71,65 @@
               >
             </li>
             <li class="nav-item">
-              <a class="nav-link text-white" href="/emp_profile">Profile</a>
+              <a class="nav-link text-white" href="/index" rel="nofollow"
+                >Cars</a
+              >
             </li>
             <li class="nav-item">
-              <a class="nav-link text-white" href="/sales">Sales</a>
+              <a class="nav-link text-white" href="/wishlist">Wishlist</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link text-white" href="/reviews">Reviews</a>
+              <a class="nav-link text-white" href="/appointments"
+                >Appointments</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-white" href="/profile">Profile</a>
             </li>
           </ul>
         </div>
       </div>
     </nav>
     <!-- Navbar -->
-    <div
-      style="display: flex; justify-content: center"
-      style="margin-top: 10px"
-    >
-      <h1
-        style="font-family: 'Protest Revolution'; color: aqua; margin-top: 5%"
-      >
-        REVIEWS
-      </h1>
+    <div style="display: flex; margin-top: 5%; justify-content: center">
+      <h2 style="font-family: cursive">Review Form</h2>
     </div>
-    <section>
-      <div class="container py-5">
-        <!-- Jinja here -->
-        {% for tuple in data %}
-        <div class="row justify-content-center mb-3">
-          <div class="col-md-12 col-xl-10">
-            <div class="card shadow-0 border rounded-3">
-              <div class="card-body">
-                <div class="row">
-                  <div class="col-md-6 col-lg-6 col-xl-6" style="width: 700px">
-                    <h4>Description</h4>
-                    <h6>{{ tuple[2] }}</h6>
-                  </div>
-                  <div
-                    class="col-md-6 col-lg-3 col-xl-3 border-sm-start-none border-start"
-                  >
-                    <div class="d-flex flex-row align-items-center mb-1">
-                      <h5 class="mb-1 me-1">Star Rating from 1-10</h5>
-                    </div>
-                    <h6 class="text-success">{{ tuple[1] }}</h6>
-                    <div class="d-flex flex-column mt-4"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
+    <div style="display: flex; margin-top: 5%; justify-content: center">
+      <form action="/enter_review" method="post" style="width: 40%">
+        <div class="modal-body mx-3">
+          <div class="md-form mb-5">
+            <!-- <i
+              class="fas fa-envelope prefix grey-text"
+              style="color: white"
+            ></i> -->
+            <input type="text" id="" name="rating" class="form-control" />
+            <label
+              data-error="wrong"
+              data-success="right"
+              for="defaultForm-email"
+              style="font-family: 'Protest Revolution'"
+              >Rating 1-10</label
+            >
+          </div>
+
+          <div class="md-form mb-4">
+            <!-- <i class="fas fa-lock prefix grey-text" style="color: white"></i> -->
+            <input type="text" id="" name="des" class="form-control" />
+            <label
+              data-error="wrong"
+              data-success="right"
+              for="defaultForm-pass"
+              style="font-family: 'Protest Revolution'"
+              >Describe your experience</label
+            >
+            <input type="hidden" name="emp_id" value="{{ emo_id }}" />
+            <input type="hidden" name="car_id" value="{{ car_id }}" />
           </div>
         </div>
-        {% endfor %}
-        <!-- end for here -->
-      </div>
-    </section>
-    <script
-      type="text/javascript"
-      src="{{ url_for('static', filename = 'js/mouse.js') }}"
-    ></script>
+        <div class="modal-footer d-flex justify-content-center">
+          <button type="submit" class="btn btn-light">Submit</button>
+        </div>
+      </form>
+    </div>
   </body>
 </html>

@@ -84,10 +84,7 @@
               >
             </li>
             <li class="nav-item">
-              <a
-                class="nav-link text-white"
-                href="https://mdbootstrap.com/docs/standard/"
-                target="_blank"
+              <a class="nav-link text-white" href="/profile" target="_blank"
                 >Profile</a
               >
             </li>
@@ -159,6 +156,27 @@
                           data-locale="auto"
                         ></script>
                       </form>
+                      <a
+                        href="https://65e37778f6822df11d3fb4cb--adorable-duckanoo-94cc14.netlify.app/"
+                      >
+                        <button
+                          class="btn btn-outline-primary btn-sm mt-2"
+                          type="button"
+                        >
+                          Pay Via Crypto
+                        </button>
+                      </a>
+
+                      <a
+                        href="{{ url_for('wishlist', car_id = list[3], action = 1, final_price = list[2], mode = 'crypto') }}"
+                      >
+                        <button
+                          class="btn btn-outline-primary btn-sm mt-2"
+                          type="button"
+                        >
+                          Crypto Transferred
+                        </button>
+                      </a>
 
                       <a
                         href="{{ url_for('wishlist', car_id = list[3], action = 0) }}"
