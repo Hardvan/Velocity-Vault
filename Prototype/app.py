@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request, jsonify, redirect, session, url_for
-from QR_OCR_Generator import generate_customer_id, generate_employee_id, save_qr_code
 from flask_mysqldb import MySQL
 from datetime import date
 import stripe
@@ -8,6 +7,11 @@ from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 import base64
 import stripe
+
+# Custom modules
+from QR_OCR_Generator import generate_customer_id, generate_employee_id, save_qr_code
+from HuggingFace import sentiment_analysis, summarize_text
+
 
 import os
 from dotenv import load_dotenv
@@ -37,9 +41,8 @@ stripe.api_key = stripe_keys["secret_key"]
 
 
 # Testing Parameters
-TEST_CONNECTION = True  # ? True/False: Test/Don't test the connection to MongoDB
-# ? True/False: Test/Don't test the CRUD operations for the QR codes
-TEST_CRUD_QR_CODE = True
+TEST_CONNECTION = True  # ? Test/Don't test the connection to MongoDB
+TEST_CRUD_QR_CODE = True  # ? Test/Don't test the CRUD operations for the QR codes
 
 # Define mongo_db and collection as placeholders
 mongo_db = None
@@ -78,6 +81,122 @@ if TEST_CONNECTION:
     print("✅ Deleted the sample document.")
 
     print("=== MongoDB Connection Test Completed ===")
+
+
+def save_qr_image(base64_img, image_path):
+    """Saves the base64 image to a file.
+
+    Args:
+        base64_img (str): The base64 image.
+        image_path (str): The path to save the image.
+    """
+
+    # Convert the base64 image to bytes
+    img_bytes = base64.b64decode(base64_img)
+
+    # Save the image to a file
+    with open(image_path, "wb") as img_file:
+        img_file.write(img_bytes)
+    print(f"✅ Saved the QR code to: {image_path}")
+
+
+# ? CRUD operations for the QR codes
+# * Create
+def add_qr_code(user_id, image_path, user):
+    """Converts the image into base64 and adds a new QR code to the collection "qr_codes".
+
+    Args:
+        user_id (str): The user ID of the QR code.
+        image_path (str): The path of the image.
+        user (str): The type of user. Either 'E' for employee or 'C' for customer.
+    """
+
+    # Convert the image into base64
+    with open(image_path, "rb") as img_file:
+        base64_img = base64.b64encode(img_file.read()).decode('utf-8')
+
+    # Add the new QR code to the collection
+    mongo_collection.insert_one({'user_id': user_id,
+                                 'image': base64_img,
+                                 'user': user})
+
+    print(f"✅ Added a new QR code for {user} with user ID: {user_id}")
+
+
+# * Read
+def get_qr_code(user_id):
+    """Retrieves the QR code from the collection "qr_codes".
+
+    Args:
+        user_id (str): The user ID of the QR code.
+
+    Returns:
+        dict: The retrieved QR code.
+            Structure: {'user_id': str, 'image': str, 'user': str}
+    """
+
+    # Retrieve the QR code from the collection
+    qr_code = mongo_collection.find_one({'user_id': user_id})
+    print(f"✅ Retrieved the QR code for user ID: {user_id}")
+    return qr_code
+
+
+# * Update
+def update_qr_code(user_id, image_path):
+    """Converts the image into base64 and updates the QR code in the collection "qr_codes".
+
+    Args:
+        user_id (str): The user ID of the QR code.
+        image_path (str): The path of the image.
+    """
+
+    # Convert the image into base64
+    with open(image_path, "rb") as img_file:
+        base64_img = base64.b64encode(img_file.read()).decode('utf-8')
+
+    # Update the QR code in the collection
+    mongo_collection.update_one({'user_id': user_id},
+                                {'$set': {'image': base64_img}})
+    print(f"✅ Updated the QR code for user ID: {user_id}")
+
+
+# * Delete
+def delete_qr_code(user_id):
+    """Deletes the QR code from the collection "qr_codes".
+
+    Args:
+        user_id (str): The user ID of the QR code.
+    """
+
+    # Delete the QR code from the collection
+    mongo_collection.delete_one({'user_id': user_id})
+    print(f"✅ Deleted the QR code for user ID: {user_id}")
+
+
+if TEST_CRUD_QR_CODE:
+
+    print("=== Testing CRUD Operations for QR Codes ===")
+
+    user_id = 'charlie_3210_2757'
+    image_path = './QR_ID_Customer/charlie_3210_2757.png'
+
+    # Create
+    add_qr_code(user_id, image_path, 'C')
+
+    # Read
+    qr_code = get_qr_code(user_id)
+    print("Retrieved data:\n")
+    print(f"User ID: {qr_code['user_id']}")
+    print(f"User: {qr_code['user']}")
+    save_qr_image(qr_code['image'], user_id + "_retrieved.png")
+
+    # Update
+    update_qr_code(user_id, image_path)
+
+    # Delete
+    delete_qr_code(user_id)
+
+    print("=== CRUD Operations for QR Codes Test Completed ===")
 
 
 # HTML File variables
@@ -392,14 +511,16 @@ def get_sale_data(emp_id):
 def appointments():
     temp_app_id = request.args.get('app_id')
     bypass = request.args.get('action')
+
     if bypass == "0":  # delete the appointment
-        delete_entry(temp_app_id)
+        delete_appointment(temp_app_id)
+
     if session['user_id'] == 0:  # user is not logged in
         global name
         name = "yamete_kudasai"
         return redirect("/")
-    if request.method == "POST":
-        # Create a new appointment
+
+    if request.method == "POST":  # Create a new appointment
         input_date = request.form['date']
         date = stemmed(input_date)
         time = stem_time(input_date)
@@ -478,7 +599,7 @@ def get_wishlist_data():
     return car_details
 
 
-def delete_entry(app_id):
+def delete_appointment(app_id):
     # Delete the appointment from the "appointment" table
     write_query(f"DELETE FROM appointment WHERE app_ID = '{app_id}'")
 
@@ -532,122 +653,6 @@ def get_emp_ids():
     print(f"emp_ids: {emp_ids}")
     chosen = random.randint(0, len(emp_ids)-1)
     return emp_ids[chosen]
-
-
-def save_qr_image(base64_img, image_path):
-    """Saves the base64 image to a file.
-
-    Args:
-        base64_img (str): The base64 image.
-        image_path (str): The path to save the image.
-    """
-
-    # Convert the base64 image to bytes
-    img_bytes = base64.b64decode(base64_img)
-
-    # Save the image to a file
-    with open(image_path, "wb") as img_file:
-        img_file.write(img_bytes)
-    print(f"✅ Saved the QR code to: {image_path}")
-
-
-# ? CRUD operations for the QR codes
-# * Create
-def add_qr_code(user_id, image_path, user):
-    """Converts the image into base64 and adds a new QR code to the collection "qr_codes".
-
-    Args:
-        user_id (str): The user ID of the QR code.
-        image_path (str): The path of the image.
-        user (str): The type of user. Either 'E' for employee or 'C' for customer.
-    """
-
-    # Convert the image into base64
-    with open(image_path, "rb") as img_file:
-        base64_img = base64.b64encode(img_file.read()).decode('utf-8')
-
-    # Add the new QR code to the collection
-    mongo_collection.insert_one({'user_id': user_id,
-                                 'image': base64_img,
-                                 'user': user})
-
-    print(f"✅ Added a new QR code for {user} with user ID: {user_id}")
-
-
-# * Read
-def get_qr_code(user_id):
-    """Retrieves the QR code from the collection "qr_codes".
-
-    Args:
-        user_id (str): The user ID of the QR code.
-
-    Returns:
-        dict: The retrieved QR code.
-            Structure: {'user_id': str, 'image': str, 'user': str}
-    """
-
-    # Retrieve the QR code from the collection
-    qr_code = mongo_collection.find_one({'user_id': user_id})
-    print(f"✅ Retrieved the QR code for user ID: {user_id}")
-    return qr_code
-
-
-# * Update
-def update_qr_code(user_id, image_path):
-    """Converts the image into base64 and updates the QR code in the collection "qr_codes".
-
-    Args:
-        user_id (str): The user ID of the QR code.
-        image_path (str): The path of the image.
-    """
-
-    # Convert the image into base64
-    with open(image_path, "rb") as img_file:
-        base64_img = base64.b64encode(img_file.read()).decode('utf-8')
-
-    # Update the QR code in the collection
-    mongo_collection.update_one({'user_id': user_id},
-                                {'$set': {'image': base64_img}})
-    print(f"✅ Updated the QR code for user ID: {user_id}")
-
-
-# * Delete
-def delete_qr_code(user_id):
-    """Deletes the QR code from the collection "qr_codes".
-
-    Args:
-        user_id (str): The user ID of the QR code.
-    """
-
-    # Delete the QR code from the collection
-    mongo_collection.delete_one({'user_id': user_id})
-    print(f"✅ Deleted the QR code for user ID: {user_id}")
-
-
-if TEST_CRUD_QR_CODE:
-
-    print("=== Testing CRUD Operations for QR Codes ===")
-
-    user_id = 'charlie_3210_2757'
-    image_path = './QR_ID_Customer/charlie_3210_2757.png'
-
-    # Create
-    add_qr_code(user_id, image_path, 'C')
-
-    # Read
-    qr_code = get_qr_code(user_id)
-    print("Retrieved data:\n")
-    print(f"User ID: {qr_code['user_id']}")
-    print(f"User: {qr_code['user']}")
-    save_qr_image(qr_code['image'], user_id + "_retrieved.png")
-
-    # Update
-    update_qr_code(user_id, image_path)
-
-    # Delete
-    delete_qr_code(user_id)
-
-    print("=== CRUD Operations for QR Codes Test Completed ===")
 
 
 if __name__ == "__main__":
