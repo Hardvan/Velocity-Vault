@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 01, 2024 at 12:34 AM
+-- Generation Time: Mar 10, 2024 at 11:11 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `carshowroom`
+-- Database: `car_showroom`
 --
 
 -- --------------------------------------------------------
@@ -42,6 +42,8 @@ CREATE TABLE `appointment` (
 
 INSERT INTO `appointment` (`app_ID`, `Date`, `Time`, `handling_emp_id`, `booking_cust_id`, `Appointment_for_car_id`) VALUES
 ('hard_314', '2024-03-14', '07:33', 1003, 'hardik pawar_5660_8319', 3),
+('ian _121', '2024-03-21', '19:33', 1003, 'ian s tauro_4879_5954', 1),
+('ian _414', '2024-03-14', '02:40', 1003, 'ian s tauro_4879_5954', 4),
 ('kara_222', '2024-03-22', '08:24', 1003, 'karan_1384_1419', 2);
 
 -- --------------------------------------------------------
@@ -98,9 +100,11 @@ CREATE TABLE `car_ownership` (
 
 INSERT INTO `car_ownership` (`owner_cust_id`, `owned_car_id`, `emp_ID`) VALUES
 ('hardik pawar_5660_8319', 1, 1004),
-('ian s tauro_4879_5954', 2, 1001),
+('ian s tauro_4879_5954', 1, 1004),
+('ian s tauro_4879_5954', 2, 1002),
 ('ian s tauro_4879_5954', 3, 1001),
-('karan_1384_1419', 3, 1004);
+('karan_1384_1419', 1, 2001),
+('karan_1384_1419', 3, 1002);
 
 -- --------------------------------------------------------
 
@@ -124,6 +128,7 @@ CREATE TABLE `customer` (
 
 INSERT INTO `customer` (`customer_ID`, `Name`, `Age`, `Phone`, `Email`, `Registration_Date`, `Password`) VALUES
 ('hardik pawar_5660_8319', 'Hardik Pawar', 19, 2147483647, 'hardikhp.cs21@rvce.edu.in', '2024-02-28', 'wakuwaku8989'),
+('harshit_1401_2313', 'Harshit', 20, 2147483647, 'harshit@gmail.com', '2024-03-10', 'qwerty111'),
 ('ian s tauro_4879_5954', 'Ian S Tauro', 19, 2147483647, 'iantauro.cs21@nie.edu.in', '2024-02-28', 'qwerty101'),
 ('karan_1384_1419', 'Karan', 19, 2147483647, 'karan.sathish980@gmail.com', '2024-02-28', 'Imbatman#');
 
@@ -183,12 +188,22 @@ INSERT INTO `employee` (`emp_ID`, `Name`, `Age`, `Gender`, `Salary`, `works_for_
 --
 
 CREATE TABLE `review` (
-  `review_ID` int(11) NOT NULL,
+  `review_ID` varchar(20) NOT NULL,
   `Star_rating` int(1) NOT NULL,
   `User_review` text NOT NULL,
   `review_cust_id` varchar(40) NOT NULL,
-  `assessed_car_id` int(11) NOT NULL
+  `assessed_car_id` int(11) NOT NULL,
+  `for_emp_ID` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `review`
+--
+
+INSERT INTO `review` (`review_ID`, `Star_rating`, `User_review`, `review_cust_id`, `assessed_car_id`, `for_emp_ID`) VALUES
+('amaz_10_3_ng_1710080', 10, 'amazing', 'karan_1384_1419', 3, 1004),
+('grea_9_3_at_17100813', 9, 'great', 'karan_1384_1419', 3, 1004),
+('outs_10_3_te_1710094', 10, 'outstanding mate', 'harshit_1401_2313', 3, 1004);
 
 -- --------------------------------------------------------
 
@@ -197,7 +212,7 @@ CREATE TABLE `review` (
 --
 
 CREATE TABLE `sale` (
-  `sale_ID` int(11) NOT NULL,
+  `sale_ID` varchar(20) NOT NULL,
   `sale_date` date NOT NULL,
   `final_price` int(15) NOT NULL,
   `payment_method` varchar(20) NOT NULL,
@@ -205,6 +220,22 @@ CREATE TABLE `sale` (
   `sale_by_emp_id` int(11) NOT NULL,
   `sale_involved_car_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `sale`
+--
+
+INSERT INTO `sale` (`sale_ID`, `sale_date`, `final_price`, `payment_method`, `sale_to_cust_id`, `sale_by_emp_id`, `sale_involved_car_id`) VALUES
+('hars_3_1004_2024-03-', '2024-03-10', 85, 'visa', 'harshit_1401_2313', 1004, 3),
+('ian _1_1004_2024-03-', '2024-03-06', 51, 'visa', 'ian s tauro_4879_5954', 1004, 1),
+('ian _2_1001_2024-03-', '2024-03-06', 235, 'visa', 'ian s tauro_4879_5954', 1001, 2),
+('ian _3_1001_2024-03-', '2024-03-06', 85, 'visa', 'ian s tauro_4879_5954', 1001, 3),
+('kara_1_1002_2024-03-', '2024-03-06', 51, 'visa', 'karan_1384_1419', 1002, 1),
+('kara_1_1004_2024-03-', '2024-03-06', 51, 'visa', 'karan_1384_1419', 1004, 1),
+('kara_2_2001_2024-03-', '2024-03-11', 235, 'crypto', 'karan_1384_1419', 2001, 2),
+('kara_3_1004_2024-03-', '2024-03-06', 85, 'visa', 'karan_1384_1419', 1004, 3),
+('kara_3_2001_2024-03-', '2024-03-11', 85, 'visa', 'karan_1384_1419', 2001, 3),
+('kara_4_1004_2024-03-', '2024-03-11', 48, 'visa', 'karan_1384_1419', 1004, 4);
 
 -- --------------------------------------------------------
 
