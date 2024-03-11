@@ -27,7 +27,7 @@ app.secret_key = 'lololol898989'
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
-app.config['MYSQL_DB'] = 'carshowroom'
+app.config['MYSQL_DB'] = 'car_showroom'
 
 # User variables
 logged_in = False  # ? True/False: User is logged in or not
@@ -581,6 +581,7 @@ def get_emp_data():
 def customer_data():
     fetchdata = read_query(
         f"SELECT * FROM customer WHERE customer_ID = '{session['user_id']}'")
+    print(f"Customer data fetched: {fetchdata}")
     return fetchdata[0]
 
 
