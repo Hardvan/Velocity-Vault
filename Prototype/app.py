@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, jsonify, redirect, session, url_for
 from flask_mysqldb import MySQL
 from datetime import date
+import time
 import stripe
 import random
 from pymongo.mongo_client import MongoClient
@@ -254,7 +255,8 @@ def custLogin():
             # Add the new QR code to the collection "qr_codes"
             add_qr_code(customer_id, image_path, "C", mongo_collection)
 
-            # Save the customer ID in the session
+            # #Save the customer ID in the session      
+
             current_user_id = customer_id
             print(f"current_user_id: {current_user_id}")
             session['user_id'] = current_user_id
@@ -357,13 +359,17 @@ def wishlist():
     print(f"session['user_id']: {session['user_id']}")
     car_id = request.args.get('car_id')
     action = request.args.get('action')
+    mode = request.args.get('mode')
     print(f"car_id: {car_id}")
     print(f"action: {action}")
 
     if action == "1":  # buy the car from the wishlist
         sale_date = date.today()
         final_price = request.args.get('final_price')
-        payment_method = "visa"
+        if mode:
+            payment_method = "crypto"
+        else:
+            payment_method = "visa"
         sale_to_cust_id = session['user_id']
         sale_by_emp_id = get_emp_who_sold(session['user_id'], car_id)
         sale_involved_car_id = car_id
@@ -438,6 +444,11 @@ def get_sale_data(emp_id):
 
     return fetchdata
 
+@app.route('/profile')
+def profile():
+    cust_data = customer_data()
+    bought_data = get_bought_car_data()
+    return render_template("User/profile_user.html", cust_data = cust_data, bought_data = bought_data)
 
 @app.route('/appointments', methods=['GET', 'POST'])
 def appointments():
@@ -470,6 +481,138 @@ def appointments():
     appointments_list = get_appointments(session['user_id'])
 
     return render_template("User/Appointments.html", list=appointments_list)
+
+@app.route('/emp_profile')
+def emp_profile():
+    emp_data = get_emp_data()
+    sold_data = get_sold_data()
+    incentive = calc_emp_incentive()
+    return render_template('User/profile_employee.html', emp_data = emp_data, sold_data = sold_data, incentive = incentive)
+
+@app.route('/enter_review', methods = ['GET', 'POST'])
+def enter_review():
+    if request.method == 'POST':
+        des = request.form['des']
+        rating = request.form['rating']
+        print(des)
+        print(rating)
+        print(session['emp_id'])
+        print(session['car_id'])
+        push_review(des, rating)
+    else:
+        emp_id = request.args.get('emp_id')
+        print(request.args)
+        session['emp_id'] = request.args.get('emp_id')
+        session['car_id'] = request.args.get('car_id')
+        print(emp_id)
+    return render_template('User/write_review.html')
+
+@app.route('/reviews')
+def reviews():
+    data = fetch_reviews()
+    print(data)
+    return render_template('User/reviews.html', data = data)
+
+@app.route('/backend-operation')
+def backend_operation():
+    # Perform backend operations here
+    backend_data = "Backend operations performed successfully."
+    print("lol")
+    car_id = request.args.get('car_id')
+    action = request.args.get('action')
+    final_price = request.args.get('final_price')
+    return redirect(url_for('wishlist', car_id=car_id, action=action, final_price=final_price))
+
+def fetch_reviews():
+    cur = mysql.connection.cursor()
+    str = f"SELECT * FROM review WHERE for_emp_ID = {session['user_id']}"
+    cur.execute(str)
+    fetchdata = cur.fetchall()
+    print(f"fetchdata: {fetchdata}")
+    cur.close()
+    return fetchdata
+
+def push_review(des, rating):
+    id = generate_review_id(des, rating)
+    print(id)
+    cur = mysql.connection.cursor()
+    str_customer = f"INSERT INTO review VALUES('{id}',{rating},'{des}','{session['user_id']}',{session['car_id']},{session['emp_id']})"
+    print(f"str_customer: {str_customer}")
+    cur.execute(str_customer)
+    mysql.connection.commit()
+    cur.close()
+
+def generate_review_id(des, rating):
+    str = f"{des[:4]}_{rating}_{session['car_id']}_{des[-2:]}_{time.time()}"
+    return str
+
+
+def calc_emp_incentive():
+    cur = mysql.connection.cursor()
+    str = f"SELECT sale_involved_car_id FROM sale WHERE sale_by_emp_id = {session['user_id']}"
+    cur.execute(str)
+    fetchdata = cur.fetchall()
+    list = []
+    for ele in fetchdata:
+        str = f"SELECT price FROM car_features WHERE car_ID = {ele[0]}"
+        cur.execute(str)
+        result = cur.fetchall()
+        list.append(result[0][0])
+    amount = 0
+    for ele in list:
+        amount = amount + 0.02*ele
+    amount = amount*100000
+    print(f"list: {amount}")
+    cur.close()
+    return amount
+
+def get_sold_data():
+    cur = mysql.connection.cursor()
+    str = f"SELECT sale_involved_car_id, sale_date FROM sale WHERE sale_by_emp_id = {session['user_id']}"
+    cur.execute(str)
+    fetchdata = cur.fetchall()
+    list = []
+    for ele in fetchdata:
+        str = f"SELECT car_name, image_link, price FROM car_features WHERE car_ID = {ele[0]}"
+        cur.execute(str)
+        result = cur.fetchall()
+        list.append(result[0] + ele)
+    print(f"list: {list}")
+    cur.close()
+    return list
+
+def get_emp_data():
+    cur = mysql.connection.cursor()
+    str = f"SELECT * FROM employee WHERE emp_ID = {session['user_id']}"
+    cur.execute(str)
+    fetchdata = cur.fetchall()
+    print(f"fetchdata: {fetchdata[0]}")
+    cur.close()
+    return fetchdata[0]
+
+def customer_data():
+    cur = mysql.connection.cursor()
+    str = f"SELECT * FROM customer WHERE customer_ID = '{session['user_id']}'"
+    cur.execute(str)
+    fetchdata = cur.fetchall()
+    print(f"fetchdata: {fetchdata[0]}")
+    cur.close()
+    return fetchdata[0]
+
+def get_bought_car_data():
+    cur = mysql.connection.cursor()
+    str = f"SELECT sale_involved_car_id, sale_date, sale_by_emp_id FROM sale WHERE sale_to_cust_id = '{session['user_id']}'"
+    cur.execute(str)
+    fetchdata = cur.fetchall()
+    list = []
+    for ele in fetchdata:
+        str = f"SELECT car_name, image_link, price FROM car_features WHERE car_ID = {ele[0]}"
+        cur.execute(str)
+        result = cur.fetchall()
+        list.append(result[0] + ele)
+    print(f"list: {list}")
+    cur.close()
+    return list
 
 
 def get_car_data():

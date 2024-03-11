@@ -36,9 +36,55 @@
     />
   </head>
   <body style="background-color: rgb(29, 27, 27)">
-    <div style="display: flex; justify-content: center">
+    <!-- Navbar -->
+    <nav
+      class="navbar navbar-expand-lg navbar-light fixed-top text-success"
+      style="background-color: black"
+    >
+      <div class="container-fluid">
+        <!-- Navbar brand -->
+        <a class="navbar-brand" href="/">
+          <img
+            src="{{ url_for('static', filename = 'images/logo.png') }}"
+            height="16"
+            alt=""
+            loading="lazy"
+            style="margin-top: -3px"
+          />
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-mdb-collapse-init
+          data-mdb-target="#navbarExample01"
+          aria-controls="navbarExample01"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <i class="fas fa-bars" style="color: white"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarExample01">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0" style="color: white">
+            <li class="nav-item">
+              <a class="nav-link text-white" href="/emp_profile">Profile</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-white" href="/sales">Sales</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link text-white" href="/reviews">Reviews</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <!-- Navbar -->
+    <div
+      style="display: flex; justify-content: center"
+      style="margin-top: 10px"
+    >
       <h1
-        style="font-family: 'Protest Revolution'; color: aqua; margin-top: 3%"
+        style="font-family: 'Protest Revolution'; color: aqua; margin-top: 5%"
       >
         SALES
       </h1>
@@ -92,5 +138,9 @@
         <!-- end for here -->
       </div>
     </section>
+    <script
+      type="text/javascript"
+      src="{{ url_for('static', filename = 'js/mouse.js') }}"
+    ></script>
   </body>
 </html>
