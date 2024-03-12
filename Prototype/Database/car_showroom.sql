@@ -195,7 +195,10 @@ CREATE TABLE `review` (
   `User_review` text NOT NULL,
   `review_cust_id` varchar(40) NOT NULL,
   `assessed_car_id` int(11) NOT NULL,
-  `for_emp_ID` int(11) NOT NULL
+  `for_emp_ID` int(11) NOT NULL,
+  `sentiment` varchar(20),
+  `sentiment_score` int(11),
+  `summarized_review` text
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --

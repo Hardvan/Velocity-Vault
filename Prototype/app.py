@@ -576,9 +576,22 @@ def fetch_reviews():
 
 
 def push_review(des, rating):
+    des = des.replace("'", " ")
     review_id = generate_review_id(des, rating)
+    s = sentiment_analysis(des)
+    sentiment = s['label']
+    sentiment_score = s['score']
+    sentiment_score = round(sentiment_score*100)
+    s2 = summarize_text(des)
+    summarized_text = s2['summary_text']
+    # Replace ' to avoid SQL syntax errors
+
+    print(f"sentiment: {sentiment}")
+    print(f"sentiment_score: {sentiment_score}")
+    print(f"summarized_text: {summarized_text}")
+
     write_query(
-        f"INSERT INTO review VALUES('{review_id}',{rating},'{des}','{session['user_id']}',{session['car_id']},{session['emp_id']})")
+        f"INSERT INTO review VALUES('{review_id}',{rating},'{des}','{session['user_id']}',{session['car_id']},{session['emp_id']},'{sentiment}','{sentiment_score}','{summarized_text}')")
 
 
 def generate_review_id(des, rating):
