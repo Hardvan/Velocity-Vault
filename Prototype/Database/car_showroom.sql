@@ -120,18 +120,18 @@ CREATE TABLE `customer` (
   `Email` varchar(40) NOT NULL,
   `Registration_Date` date NOT NULL,
   `Password` varchar(20) NOT NULL,
-  'Encrypted_Password' varchar(256) NOT NULL
+  `Encrypted_Password` varchar(256) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `customer`
 --
 
-INSERT INTO `customer` (`customer_ID`, `Name`, `Age`, `Phone`, `Email`, `Registration_Date`, `Password`) VALUES
-('hardik pawar_5660_8319', 'Hardik Pawar', 19, 2147483647, 'hardikhp.cs21@rvce.edu.in', '2024-02-28', 'wakuwaku8989'),
-('harshit_1401_2313', 'Harshit', 20, 2147483647, 'harshit@gmail.com', '2024-03-10', 'qwerty111'),
-('ian s tauro_4879_5954', 'Ian S Tauro', 19, 2147483647, 'iantauro.cs21@nie.edu.in', '2024-02-28', 'qwerty101'),
-('karan_1384_1419', 'Karan', 19, 2147483647, 'karan.sathish980@gmail.com', '2024-02-28', 'Imbatman#');
+INSERT INTO `customer` (`customer_ID`, `Name`, `Age`, `Phone`, `Email`, `Registration_Date`, `Password`, `Encrypted_Password`) VALUES
+('hardik pawar_5660_8319', 'Hardik Pawar', 19, 2147483647, 'hardikhp.cs21@rvce.edu.in', '2024-02-28', 'wakuwaku8989', 'NA'),
+('harshit_1401_2313', 'Harshit', 20, 2147483647, 'harshit@gmail.com', '2024-03-10', 'qwerty111', 'NA'),
+('ian s tauro_4879_5954', 'Ian S Tauro', 19, 2147483647, 'iantauro.cs21@nie.edu.in', '2024-02-28', 'qwerty101', 'NA'),
+('karan_1384_1419', 'Karan', 19, 2147483647, 'karan.sathish980@gmail.com', '2024-02-28', 'Imbatman#', 'NA');
 
 -- --------------------------------------------------------
 
@@ -168,20 +168,20 @@ CREATE TABLE `employee` (
   `Salary` int(15) NOT NULL,
   `works_for_dept_id` int(11) NOT NULL,
   `password` varchar(20) NOT NULL,
-  'Encrypted_Password' varchar(256) NOT NULL
+  `Encrypted_Password` varchar(256) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `employee`
 --
 
-INSERT INTO `employee` (`emp_ID`, `Name`, `Age`, `Gender`, `Salary`, `works_for_dept_id`, `password`) VALUES
-(1001, 'Rohit Sharma', 37, 'Male', 100000, 1, 'rs37'),
-(1002, 'Robert Kiyosaki', 76, 'Male', 2000000, 1, 'rk76'),
-(1003, 'Warren Buffett', 67, 'Male', 3400000, 1, 'wb67'),
-(1004, 'Avanti Nagral', 27, 'Female', 1600000, 1, 'an27'),
-(2001, 'Virat Kohli', 36, 'Male', 1300000, 2, 'vk36'),
-(3001, 'Smriti Mandhana', 27, 'Female', 900000, 3, 'sm27');
+INSERT INTO `employee` (`emp_ID`, `Name`, `Age`, `Gender`, `Salary`, `works_for_dept_id`, `password`, `Encrypted_Password`) VALUES
+(1001, 'Rohit Sharma', 37, 'Male', 100000, 1, 'rs37', 'NA'),
+(1002, 'Robert Kiyosaki', 76, 'Male', 2000000, 1, 'rk76', 'NA'),
+(1003, 'Warren Buffett', 67, 'Male', 3400000, 1, 'wb67', 'NA'),
+(1004, 'Avanti Nagral', 27, 'Female', 1600000, 1, 'an27', 'NA'),
+(2001, 'Virat Kohli', 36, 'Male', 1300000, 2, 'vk36', 'NA'),
+(3001, 'Smriti Mandhana', 27, 'Female', 900000, 3, 'sm27', 'NA');
 
 -- --------------------------------------------------------
 

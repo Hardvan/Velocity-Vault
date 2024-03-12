@@ -194,6 +194,38 @@ def dashboard():
     It displays the main features of the website and allows the user to navigate to different pages.
     """
 
+    # Load customer and employee tables, fill "Encrypted_Password" column if it has value 'NA'
+    FILL_ENCRYPTED_PASSWORDS = True
+    if FILL_ENCRYPTED_PASSWORDS:
+        # Fetch the details of all the customers from the "customer" table
+        customers = read_query(
+            "SELECT customer_ID, Password, Encrypted_Password FROM customer")
+        print(f"customers: {customers}")
+        # Fill the "Encrypted_Password" column in the "customer" table
+        for customer in customers:
+            customer_id = customer[0]
+            password = customer[1]
+            encrypted_password = customer[2]
+
+            if encrypted_password == 'NA':
+                write_query(
+                    f"UPDATE customer SET Encrypted_Password = '{hash_password(password)}' WHERE customer_ID = '{customer_id}'")
+
+        # Fetch the details of all the employees from the "employee" table
+        employees = read_query(
+            "SELECT emp_ID, password, Encrypted_Password FROM employee")
+        # Fill the "Encrypted_Password" column in the "employee" table
+        for employee in employees:
+            emp_id = employee[0]
+            password = employee[1]
+            encrypted_password = employee[2]
+
+            if encrypted_password == 'NA':
+                write_query(
+                    f"UPDATE employee SET Encrypted_Password = '{hash_password(password)}' WHERE emp_ID = '{emp_id}'")
+
+        print("✅ Filled the 'Encrypted_Password' column in the 'customer' and 'employee' tables.")
+
     alert = False  # True/False: Alert message is displayed or not
     global current_user_id
     current_user_id = 0
@@ -273,8 +305,16 @@ def custLogin():
             action = "login"
 
             # Check if the customer exists in the "customer" table
-            exists, customer_id = customerExists(email, password)
+            exists, customer_id = customerExists(email)
             if not exists:
+                logged_in = False
+                alert = False
+                return render_template(dashboard_html,
+                                       alert=alert, name="unsuccessful",
+                                       action=action, logged_in=logged_in)
+
+            # Check if the password is correct
+            if not check_cust_password(password, customer_id[0][0]):
                 logged_in = False
                 alert = False
                 return render_template(dashboard_html,
@@ -603,12 +643,11 @@ def get_car_data():
     return read_query("SELECT * FROM car_features")
 
 
-def customerExists(email, password):
+def customerExists(email):
     """Checks if the customer exists in the "customer" table.
 
     Args:
         email (str): The customer's email.
-        password (str): The customer's password.
 
     Returns:
         bool: True if the customer exists, False otherwise.
@@ -616,9 +655,28 @@ def customerExists(email, password):
     """
 
     customer_id = read_query(
-        f"SELECT customer_ID from customer where Encrypted_Password = '{hash_password(password)}' and Email = '{email}'")
+        f"SELECT customer_ID from customer where Email = '{email}'")
+    print(f"customer_id: {customer_id}")
 
     return bool(customer_id), customer_id
+
+
+def check_cust_password(password, customer_id):
+    """Checks if the password is correct for the customer.
+
+    Args:
+        password (str): The password entered by the customer.
+        customer_id (str): The customer's ID.
+
+    Returns:
+        bool: True if the password is correct, False otherwise.
+    """
+
+    fetchdata = read_query(
+        f"SELECT Encrypted_Password FROM customer WHERE customer_ID = '{customer_id}'")
+
+    check = check_password(password, fetchdata[0][0])
+    return check
 
 
 def get_empid(email, password):
