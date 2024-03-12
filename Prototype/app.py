@@ -13,6 +13,7 @@ import stripe
 from QR_OCR_Generator import generate_customer_id, generate_employee_id, save_qr_code
 from CRUD_QR import add_qr_code, get_qr_code, update_qr_code, delete_qr_code
 from HuggingFace import sentiment_analysis, summarize_text
+from password_manager import hash_password, check_password
 
 
 import os
@@ -246,7 +247,7 @@ def custLogin():
 
             # Insert the new customer into the "customer" table
             write_query(
-                f"INSERT INTO customer VALUES('{customer_id}','{name}', {age}, {phone}, '{email}', '{date.today()}', '{password}')")
+                f"INSERT INTO customer VALUES('{customer_id}','{name}', {age}, {phone}, '{email}', '{date.today()}', '{password}', '{hash_password(password)}')")
 
             # Create the QR code of the customer
             image_path = save_qr_code(
@@ -255,7 +256,7 @@ def custLogin():
             # Add the new QR code to the collection "qr_codes"
             add_qr_code(customer_id, image_path, "C", mongo_collection)
 
-            # #Save the customer ID in the session
+            # Save the customer ID in the session
 
             current_user_id = customer_id
             print(f"current_user_id: {current_user_id}")
@@ -615,7 +616,7 @@ def customerExists(email, password):
     """
 
     customer_id = read_query(
-        f"SELECT customer_ID from customer where Password = '{password}' and Email = '{email}'")
+        f"SELECT customer_ID from customer where Encrypted_Password = '{hash_password(password)}' and Email = '{email}'")
 
     return bool(customer_id), customer_id
 
@@ -624,7 +625,7 @@ def get_empid(email, password):
 
     # Check if the employee exists in the "employee" table
     fetchdata = read_query(
-        f"SELECT emp_ID FROM employee WHERE Name = '{email}' and password = '{password}'")
+        f"SELECT emp_ID FROM employee WHERE Name = '{email}' and Encrypted_Password = '{hash_password(password)}'")
 
     if fetchdata == ():  # no such employee
         return None

@@ -119,7 +119,8 @@ CREATE TABLE `customer` (
   `Phone` int(10) NOT NULL,
   `Email` varchar(40) NOT NULL,
   `Registration_Date` date NOT NULL,
-  `Password` varchar(20) NOT NULL
+  `Password` varchar(20) NOT NULL,
+  'Encrypted_Password' varchar(256) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -166,7 +167,8 @@ CREATE TABLE `employee` (
   `Gender` varchar(11) NOT NULL,
   `Salary` int(15) NOT NULL,
   `works_for_dept_id` int(11) NOT NULL,
-  `password` varchar(20) NOT NULL
+  `password` varchar(20) NOT NULL,
+  'Encrypted_Password' varchar(256) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
