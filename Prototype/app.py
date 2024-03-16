@@ -571,6 +571,107 @@ def backend_operation():
     return redirect(url_for('wishlist', car_id=car_id, action=action, final_price=final_price))
 
 
+@app.route('/analysis')
+def analysis():
+    """
+    Uses nested SQL Queries to perform various permutations & combinations of the data analysis such as:
+    Basic Statistics:
+    - Total Employees
+    - Total Customers
+    - Total Cars in Stock
+    - Average Price of Cars
+    - Total Cars Sold
+    - Total Cars in Wishlist
+    - Total Sales
+    - Total Revenue
+    - Total Appointments
+    Advanced Statistics:
+    - Most Sold Car
+    - Most Sold Car by a Particular Employee
+    - Customer with most cars in Wishlist
+    - Customer with most cars bought
+    - Employee with most sales
+    - Employee with most appointments
+    """
+
+    # Basic Statistics
+
+    # Total Employees
+    total_employees = read_query("SELECT COUNT(*) FROM employee")[0][0]
+
+    # Total Customers
+    total_customers = read_query("SELECT COUNT(*) FROM customer")[0][0]
+
+    # Total Cars in Stock
+    total_cars = read_query("SELECT COUNT(*) FROM car_features")[0][0]
+
+    # Average Price of Cars
+    avg_price = read_query("SELECT AVG(price) FROM car_features")[0][0]
+
+    # Total Cars Sold
+    total_cars_sold = read_query("SELECT COUNT(*) FROM sale")[0][0]
+
+    # Total Cars in Wishlist
+    total_wishlist_cars = read_query(
+        "SELECT COUNT(*) FROM car_ownership")[0][0]
+
+    # Total Sales
+    total_sales = read_query("SELECT COUNT(*) FROM sale")[0][0]
+
+    # Total Revenue
+    total_revenue = read_query("SELECT SUM(final_price) FROM sale")[0][0]
+
+    # Total Appointments
+    total_appointments = read_query("SELECT COUNT(*) FROM appointment")[0][0]
+
+    # Advanced Statistics
+
+    # Most Sold Car
+    most_sold_car = read_query(
+        "SELECT car_name, COUNT(sale_involved_car_id) FROM sale INNER JOIN car_features ON sale_involved_car_id = car_ID GROUP BY sale_involved_car_id ORDER BY COUNT(sale_involved_car_id) DESC LIMIT 1")[0]
+
+    # Most Sold Car by a Particular Employee
+    most_sold_car_by_emp = read_query(
+        "SELECT Name, COUNT(sale_involved_car_id) FROM sale INNER JOIN employee ON sale_by_emp_id = emp_ID GROUP BY sale_by_emp_id ORDER BY COUNT(sale_involved_car_id) DESC LIMIT 1")[0]
+
+    # Customer with most cars in Wishlist
+    cust_most_wishlist = read_query(
+        "SELECT owner_cust_id, COUNT(owned_car_id) FROM car_ownership GROUP BY owner_cust_id ORDER BY COUNT(owned_car_id) DESC LIMIT 1")[0]
+
+    # Customer with most cars bought
+    cust_most_bought = read_query(
+        "SELECT sale_to_cust_id, COUNT(sale_involved_car_id) FROM sale GROUP BY sale_to_cust_id ORDER BY COUNT(sale_involved_car_id) DESC LIMIT 1")[0]
+
+    # Employee with most sales
+    emp_most_sales = read_query(
+        "SELECT sale_by_emp_id, COUNT(sale_involved_car_id) FROM sale GROUP BY sale_by_emp_id ORDER BY COUNT(sale_involved_car_id) DESC LIMIT 1")[0]
+
+    # Employee with most appointments
+    emp_most_appointments = read_query(
+        "SELECT handling_emp_id, COUNT(app_ID) FROM appointment GROUP BY handling_emp_id ORDER BY COUNT(app_ID) DESC LIMIT 1")[0]
+
+    statistics = {
+        "total_employees": total_employees,
+        "total_customers": total_customers,
+        "total_cars": total_cars,
+        "avg_price": avg_price,
+        "total_cars_sold": total_cars_sold,
+        "total_wishlist_cars": total_wishlist_cars,
+        "total_sales": total_sales,
+        "total_revenue": total_revenue,
+        "total_appointments": total_appointments,
+        "most_sold_car": most_sold_car,
+        "most_sold_car_by_emp": most_sold_car_by_emp,
+        "cust_most_wishlist": cust_most_wishlist,
+        "cust_most_bought": cust_most_bought,
+        "emp_most_sales": emp_most_sales,
+        "emp_most_appointments": emp_most_appointments
+    }
+    print(f"statistics: {statistics}")
+
+    return render_template("User/analysis.html", statistics=statistics)
+
+
 def fetch_reviews():
     return read_query(f"SELECT * FROM review WHERE for_emp_ID = {session['user_id']}")
 

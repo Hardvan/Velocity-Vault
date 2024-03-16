@@ -1,0 +1,111 @@
+<!--statics dictionary:
+statistics = {
+        "total_employees": total_employees,
+        "total_customers": total_customers,
+        "total_cars": total_cars,
+        "avg_price": avg_price,
+        "total_cars_sold": total_cars_sold,
+        "total_wishlist_cars": total_wishlist_cars,
+        "total_sales": total_sales,
+        "total_revenue": total_revenue,
+        "total_appointments": total_appointments,
+        "most_sold_car": most_sold_car,
+        "most_sold_car_by_emp": most_sold_car_by_emp,
+        "cust_most_wishlist": cust_most_wishlist,
+        "cust_most_bought": cust_most_bought,
+        "emp_most_sales": emp_most_sales,
+        "emp_most_appointments": emp_most_appointments
+    }
+-->
+
+{% if statistics %}
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <h1 class="text-center">Statistics</h1>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Statistic</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Total Employees</td>
+            <td>{{ statistics.total_employees }}</td>
+          </tr>
+          <tr>
+            <td>Total Customers</td>
+            <td>{{ statistics.total_customers }}</td>
+          </tr>
+          <tr>
+            <td>Total Cars</td>
+            <td>{{ statistics.total_cars }}</td>
+          </tr>
+          <tr>
+            <td>Average Price</td>
+            <td>{{ statistics.avg_price }}</td>
+          </tr>
+          <tr>
+            <td>Total Cars Sold</td>
+            <td>{{ statistics.total_cars_sold }}</td>
+          </tr>
+          <tr>
+            <td>Total Wishlist Cars</td>
+            <td>{{ statistics.total_wishlist_cars }}</td>
+          </tr>
+          <tr>
+            <td>Total Sales</td>
+            <td>{{ statistics.total_sales }}</td>
+          </tr>
+          <tr>
+            <td>Total Revenue</td>
+            <td>{{ statistics.total_revenue }}</td>
+          </tr>
+          <tr>
+            <td>Total Appointments</td>
+            <td>{{ statistics.total_appointments }}</td>
+          </tr>
+          <tr>
+            <td>Most Sold Car</td>
+            <td>{{ statistics.most_sold_car }}</td>
+          </tr>
+          <tr>
+            <td>Most Sold Car By Employee</td>
+            <td>{{ statistics.most_sold_car_by_emp }}</td>
+          </tr>
+          <tr>
+            <td>Customer With Most Wishlist</td>
+            <td>{{ statistics.cust_most_wishlist }}</td>
+          </tr>
+          <tr>
+            <td>Customer With Most Bought</td>
+            <td>{{ statistics.cust_most_bought }}</td>
+          </tr>
+          <tr>
+            <td>Employee With Most Sales</td>
+            <td>{{ statistics.emp_most_sales }}</td>
+          </tr>
+          <tr>
+            <td>Employee With Most Appointments</td>
+            <td>{{ statistics.emp_most_appointments }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% else %}
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <h1 class="text-center">No Statistics Available</h1>
+    </div>
+  </div>
+</div>
+{% endif %}
