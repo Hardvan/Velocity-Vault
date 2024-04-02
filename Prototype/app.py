@@ -245,7 +245,7 @@ def index():
     print(f"session['user_id']: {session['user_id']}")
     if session['user_id'] == 0:  # user is not logged in
         global name
-        name = "yamete_kudasai"  # dummy name
+        name = "dummy_name"  # dummy name
         return redirect("/")
 
     car_data = get_car_data()
@@ -394,7 +394,7 @@ def wishlist():
     if session['user_id'] == 0:  # user is not logged in
         alert = False
         global name
-        name = "yamete_kudasai"
+        name = "dummy_name"
         return redirect("/")
 
     print(f"session['user_id']: {session['user_id']}")
@@ -503,7 +503,7 @@ def appointments():
 
     if session['user_id'] == 0:  # user is not logged in
         global name
-        name = "yamete_kudasai"
+        name = "dummy_name"
         return redirect("/")
 
     if request.method == "POST":  # Create a new appointment

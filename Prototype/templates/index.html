@@ -1,16 +1,19 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>PHPJabbers.com | Free Car Dealer Website Template</title>
+    <title>Index</title>
     <meta charset="utf-8" />
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1, user-scalable=no"
     />
+
+    <!-- Bootstrap CSS -->
     <link
       rel="stylesheet"
       href="{{ url_for('static',filename='bootstrap/css/bootstrap.min.css') }}"
     />
+    <!-- Custom CSS -->
     <link
       rel="stylesheet"
       href="{{ url_for('static',filename='css/main.css') }}"
@@ -26,8 +29,8 @@
       href="https://fonts.googleapis.com/css2?family=Protest+Revolution&family=Roboto:wght@400;500;700&family=Tangerine:wght@700&display=swap"
       rel="stylesheet"
     />
-    
   </head>
+
   <body style="background-color: rgb(29, 27, 27)" class="is-preload">
     <!-- Wrapper -->
     <div id="wrapper" style="background-color: rgb(29, 27, 27)">
@@ -51,15 +54,10 @@
       >
         <ul class="links">
           <li class="active"><a href="index.html">Home </a></li>
-
           <li><a href="cars.html">Cars</a></li>
-
           <li><a href="about-us.html">About Us</a></li>
-
           <li><a href="blog.html">Blog</a></li>
-
           <li><a href="contact.html">Contact Us</a></li>
-
           <li class="dropdown">
             <a
               class="nav-link dropdown-toggle"
@@ -70,7 +68,6 @@
               aria-expanded="false"
               >More</a
             >
-
             <ul class="dropdown-menu">
               <li><a href="team.html">Team</a></li>
               <li><a href="testimonials.html">Testimonials</a></li>
@@ -111,10 +108,12 @@
               Discover the perfect vehicle for your needs!!
             </p>
             <div class="major-actions">
-                <a href="{{ url_for('custLogin', bypass = 0) }}" class="button small next"
-                  >Go Home</a
-                >
-              </div>
+              <a
+                href="{{ url_for('custLogin', bypass = 0) }}"
+                class="button small next"
+                >Go Home</a
+              >
+            </div>
           </div>
         </div>
       </section>
@@ -159,21 +158,21 @@
               </p>
 
               <h3>{{ data[1] }}</h3>
-
-              <strong>{{ data[3] }} lakh</strong></p>
-
-              <p>{{ data[11] }} hp / {{ data[9] }} / {{ data[6] }} / New vehicle</p>
+              <strong>{{ data[3] }} lakh</strong>
+              <p>
+                {{ data[11] }} hp / {{ data[9] }} / {{ data[6] }} / New vehicle
+              </p>
 
               <div class="major-actions">
-                <a href="{{ url_for('carDetails', car_id = data[0] ) }}" class="button small next"
+                <a
+                  href="{{ url_for('carDetails', car_id = data[0] ) }}"
+                  class="button small next"
                   >View Car</a
                 >
               </div>
             </header>
           </article>
           {% endfor %}
-
-          
         </section>
 
         <!-- About us -->
@@ -203,10 +202,7 @@
             "
           >
             <span class="image">
-              <img
-                src="{{ data[2] }}"
-                alt=""
-              />
+              <img src="{{ data[2] }}" alt="" />
             </span>
 
             <header class="major">
@@ -217,22 +213,21 @@
               </p>
 
               <h3>{{ data[1] }}</h3>
-
-              <strong>{{ data[3] }} lakh</strong></p>
-
-              <p>{{ data[11] }} hp / {{ data[9] }} / {{ data[6] }} / Used vehicle</p>
-
+              <strong>{{ data[3] }} lakh</strong>
+              <p>
+                {{ data[11] }} hp / {{ data[9] }} / {{ data[6] }} / Used vehicle
+              </p>
 
               <div class="major-actions">
-                <a href="{{ url_for('carDetails', car_id = data[0] ) }}" class="button small next"
+                <a
+                  href="{{ url_for('carDetails', car_id = data[0] ) }}"
+                  class="button small next"
                   >View Car</a
                 >
               </div>
             </header>
           </article>
           {% endfor %}
-
-          
         </section>
 
         <!-- Testimonials -->
@@ -245,16 +240,13 @@
               <div class="col-6">
                 <p>
                   "Nullam et orci eu lorem consequat tincidunt vivamus et
-                    sagittis libero. Mauris aliquet magna magna sed nunc rhoncus
-                    pharetra. Pellentesque condimentum sem. In efficitur ligula
-                    tate urna. Maecenas laoreet massa vel lacinia pellentesque
-                    lorem ipsum dolor. Nullam et orci eu lorem consequat
-                    tincidunt."
+                  sagittis libero. Mauris aliquet magna magna sed nunc rhoncus
+                  pharetra. Pellentesque condimentum sem. In efficitur ligula
+                  tate urna. Maecenas laoreet massa vel lacinia pellentesque
+                  lorem ipsum dolor. Nullam et orci eu lorem consequat
+                  tincidunt."
                 </p>
-                
               </div>
-
-             
             </div>
           </div>
         </section>
