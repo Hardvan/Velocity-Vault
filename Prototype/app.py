@@ -133,7 +133,7 @@ if TEST_CRUD_QR_CODE:
 
 
 # HTML File variables
-dashboard_html = "User/dashboard.html"
+dashboard_html = "dashboard.html"
 
 
 # SQL Functions
@@ -372,7 +372,7 @@ def empLogin():
 
 @app.route('/collections', methods=['GET', 'POST'])
 def cars():
-    return render_template("User/cars.html")
+    return render_template("cars.html")
 
 
 @app.route('/carDetails')
@@ -386,7 +386,7 @@ def carDetails():
     car_details = fetchdata[0]  # first car's details
     print(f"car_details: {car_details}")
 
-    return render_template("User/car_details.html", fetchdata=car_details)
+    return render_template("car_details.html", fetchdata=car_details)
 
 
 @app.route('/wishlist')
@@ -431,7 +431,7 @@ def wishlist():
             f"INSERT INTO car_ownership VALUES('{session['user_id']}',{car_id},{assign_emp_id})")
 
     data = get_wishlist_data()
-    return render_template("User/wishlist.html", data=data, key=stripe_keys['publishable_key'])
+    return render_template("wishlist.html", data=data, key=stripe_keys['publishable_key'])
 
 
 def gen_sale_id(cust_id, car_id, emp_id):
@@ -476,7 +476,7 @@ def charge():
 def sales():
     emp_id = session['user_id']
     data = get_sale_data(emp_id)
-    return render_template("User/sales.html", data=data)
+    return render_template("sales.html", data=data)
 
 
 def get_sale_data(emp_id):
@@ -490,7 +490,7 @@ def get_sale_data(emp_id):
 def profile():
     cust_data = customer_data()
     bought_data = get_bought_car_data()
-    return render_template("User/profile_user.html", cust_data=cust_data, bought_data=bought_data)
+    return render_template("profile_user.html", cust_data=cust_data, bought_data=bought_data)
 
 
 @app.route('/appointments', methods=['GET', 'POST'])
@@ -523,7 +523,7 @@ def appointments():
     print(f"session['user_id']: {session['user_id']}")
     appointments_list = get_appointments(session['user_id'])
 
-    return render_template("User/Appointments.html", list=appointments_list)
+    return render_template("appointments.html", list=appointments_list)
 
 
 @app.route('/emp_profile')
@@ -531,7 +531,7 @@ def emp_profile():
     emp_data = get_emp_data()
     sold_data = get_sold_data()
     incentive = calc_emp_incentive()
-    return render_template('User/profile_employee.html', emp_data=emp_data, sold_data=sold_data, incentive=incentive)
+    return render_template('profile_employee.html', emp_data=emp_data, sold_data=sold_data, incentive=incentive)
 
 
 @app.route('/enter_review', methods=['GET', 'POST'])
@@ -550,14 +550,14 @@ def enter_review():
         session['emp_id'] = request.args.get('emp_id')
         session['car_id'] = request.args.get('car_id')
         print(emp_id)
-    return render_template('User/write_review.html')
+    return render_template('write_review.html')
 
 
 @app.route('/reviews')
 def reviews():
     data = fetch_reviews()
     print(data)
-    return render_template('User/reviews.html', data=data)
+    return render_template('reviews.html', data=data)
 
 
 @app.route('/backend-operation')
@@ -669,7 +669,7 @@ def analysis():
     }
     print(f"statistics: {statistics}")
 
-    return render_template("User/analysis.html", statistics=statistics)
+    return render_template("analysis.html", statistics=statistics)
 
 
 def fetch_reviews():
