@@ -491,16 +491,16 @@ def wishlist():
         if WHATSAPP:
             text = f"""Congratulations 🎉! You have successfully bought the car. The details are:
 
+*Customer Name*: {customer_name}
 *Car Name*: {car_name}
-*Sale ID*: {sale_id}
-*Sale Date*: {sale_date}
+*Employee Name*: {emp_name}
 *Final Price*: {final_price}
 *Payment Method*: {payment_method}
+*Sale Date*: {sale_date}
+*Sale ID*: {sale_id}
 *Sale To Customer ID*: {sale_to_cust_id}
 *Sale By Employee ID*: {sale_by_emp_id}
 *Sale Involved Car ID*: {sale_involved_car_id}
-*Employee Name*: {emp_name}
-*Customer Name*: {customer_name}
 """
             t_whatsapp = threading.Thread(
                 target=ThreadSendWhatsapp, args=(text,))
