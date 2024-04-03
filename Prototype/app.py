@@ -117,7 +117,7 @@ if TEST_CRUD_QR_CODE:
 
     # Read
     qr_code = get_qr_code(user_id, mongo_collection)
-    print("Retrieved data:\n")
+    print("Retrieved data:")
     print(f"User ID: {qr_code['user_id']}")
     print(f"User: {qr_code['user']}")
     save_qr_image(qr_code['image'], user_id + "_retrieved.png")
@@ -494,7 +494,7 @@ def wishlist():
 
 
 def gen_sale_id(cust_id, car_id, emp_id):
-    sale_id = f"{cust_id[:4]}_{car_id}_{emp_id}_{date.today()}"
+    sale_id = f"{cust_id[:4]}_{car_id}_{emp_id}_{date.today()}_{time.time()}"
     print(f"sale_id: {sale_id}")
     return sale_id
 
@@ -601,9 +601,11 @@ def emp_profile():
     print("=== In the Employee Profile Page ===")
 
     emp_data = get_emp_data()
+    dept_name = get_dept_name(emp_data[5])
     sold_data = get_sold_data()
     incentive = calc_emp_incentive()
-    return render_template('profile_employee.html', emp_data=emp_data, sold_data=sold_data, incentive=incentive)
+    return render_template('profile_employee.html', emp_data=emp_data,
+                           dept_name=dept_name, sold_data=sold_data, incentive=incentive)
 
 
 @app.route('/enter_review', methods=['GET', 'POST'])
@@ -779,13 +781,15 @@ def calc_emp_incentive():
         f"SELECT sale_involved_car_id FROM sale WHERE sale_by_emp_id = {session['user_id']}")
     lst = []
     for ele in fetchdata:
-        result = f"SELECT price FROM car_features WHERE car_ID = {ele[0]}"
+        result = read_query(
+            f"SELECT price FROM car_features WHERE car_ID = {ele[0]}")
         lst.append(result[0][0])
     amount = 0
+    print(f"lst: {lst}")
     for ele in lst:
-        amount += 0.02*ele
+        amount += 0.02 * ele
     amount *= 100000
-    print(f"list: {amount}")
+    print(f"amount: {amount}")
 
     return amount
 
@@ -806,6 +810,12 @@ def get_emp_data():
     fetchdata = read_query(
         f"SELECT * FROM employee WHERE emp_ID = {session['user_id']}")
     return fetchdata[0]
+
+
+def get_dept_name(dept_id):
+    fetchdata = read_query(
+        f"SELECT Name FROM department WHERE dept_ID = {dept_id}")
+    return fetchdata[0][0]
 
 
 def customer_data():
@@ -868,11 +878,18 @@ def check_cust_password(password, customer_id):
 
 def get_empid(email, password):
 
+    print(f"email: {email}")
+    print(f"password: {password}")
     # Check if the employee exists in the "employee" table
     fetchdata = read_query(
-        f"SELECT emp_ID FROM employee WHERE Name = '{email}' and Encrypted_Password = '{hash_password(password)}'")
+        f"SELECT emp_ID, Encrypted_Password FROM employee WHERE Name = '{email}'")
 
     if fetchdata == ():  # no such employee
+        return None
+
+    # Check if the password is correct
+    if not check_password(password, fetchdata[0][1]):
+        print("❌ Incorrect password. Does not match.")
         return None
 
     # Return the employee ID

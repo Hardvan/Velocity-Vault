@@ -222,7 +222,7 @@ ALTER TABLE `car_features`
 
 -- Indexes for table `car_ownership`
 ALTER TABLE `car_ownership`
-  ADD PRIMARY KEY (`owner_cust_id`,`owned_car_id`),
+  ADD PRIMARY KEY (`owner_cust_id`,`owned_car_id`,`emp_ID`),
   ADD KEY `owned_car_id` (`owned_car_id`);
 
 -- Indexes for table `customer`
