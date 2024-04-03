@@ -205,14 +205,18 @@ def dashboard():
     It displays the main features of the website and allows the user to navigate to different pages.
     """
 
+    print("=== In the Main Dashboard ===")
+
     # Load customer and employee tables, fill "Encrypted_Password" column if it has value 'NA'
     FILL_ENCRYPTED_PASSWORDS = True
     if FILL_ENCRYPTED_PASSWORDS:
+        print("=== Filling Encrypted Passwords ===")
+
         # Fetch the details of all the customers from the "customer" table
         customers = read_query(
             "SELECT customer_ID, Password, Encrypted_Password FROM customer")
-        print(f"customers: {customers}")
         # Fill the "Encrypted_Password" column in the "customer" table
+        print("Filling Encrypted Passwords in the 'customer' table...")
         for customer in customers:
             customer_id = customer[0]
             password = customer[1]
@@ -226,6 +230,7 @@ def dashboard():
         employees = read_query(
             "SELECT emp_ID, password, Encrypted_Password FROM employee")
         # Fill the "Encrypted_Password" column in the "employee" table
+        print("Filling Encrypted Passwords in the 'employee' table...")
         for employee in employees:
             emp_id = employee[0]
             password = employee[1]
@@ -237,7 +242,7 @@ def dashboard():
 
         print("✅ Filled the 'Encrypted_Password' column in the 'customer' and 'employee' tables.")
 
-    alert = False  # True/False: Alert message is displayed or not
+    alert = False  # ? True/False: Alert message is displayed or not
     global current_user_id
     current_user_id = 0
     session['user_id'] = 0
@@ -253,6 +258,8 @@ def index():
     It allows the user to view the details of each car and add them to their wishlist.
     """
 
+    print("=== In the Index Page ===")
+
     print(f"session['user_id']: {session['user_id']}")
     if session['user_id'] == 0:  # user is not logged in
         global name
@@ -260,6 +267,7 @@ def index():
         return redirect("/")
 
     car_data = get_car_data()
+    print("✅ Fetched the car data.")
     return render_template("index.html", car_data=car_data)
 
 
@@ -269,12 +277,15 @@ def custLogin():
     After the user logs in or signs up, they are redirected to this page.
     """
 
+    print("=== In the Customer Dashboard ===")
+
     global current_user_id
     bypass = request.args.get('bypass')  # 0: Bypass the login/signup page
 
     if request.method == "POST":
         # * Signing up the user
         if 'sign_up' in request.form:
+            print("Signing up the user...")
             print(f"request.form: {request.form}")
             name = request.form['orangeForm-name']
             age = request.form['orangeForm-age']
@@ -285,22 +296,21 @@ def custLogin():
             alert = True
             action = "sign_up"
             customer_id = generate_customer_id(name, age, phone)
-            print(f"customer_id: {customer_id}")
+            print(f"Generated customer_id: {customer_id}")
             print(f"date.today(): {date.today()}")
 
             # Insert the new customer into the "customer" table
             write_query(
                 f"INSERT INTO customer VALUES('{customer_id}','{name}', {age}, {phone}, '{email}', '{date.today()}', '{password}', '{hash_password(password)}')")
+            print("✅ Inserted the new customer into the 'customer' table.")
 
-            # Create the QR code of the customer
+            # Create the QR code of the customer & add it to MongoDB collection "qr_codes"
             image_path = save_qr_code(
                 customer_id, user="C", folder="QR_ID_Customer")
-
-            # Add the new QR code to the collection "qr_codes"
             add_qr_code(customer_id, image_path, "C", mongo_collection)
+            print("✅ Added the new QR code to the collection.")
 
             # Save the customer ID in the session
-
             current_user_id = customer_id
             print(f"current_user_id: {current_user_id}")
             session['user_id'] = current_user_id
@@ -308,6 +318,7 @@ def custLogin():
 
         # * Logging in the user
         else:
+            print("Logging in the user...")
             print(f"request.form: {request.form}")
             email = request.form['email']
             password = request.form['pass']
@@ -318,6 +329,7 @@ def custLogin():
             # Check if the customer exists in the "customer" table
             exists, customer_id = customerExists(email)
             if not exists:
+                print("❌ Customer does not exist.")
                 logged_in = False
                 alert = False
                 return render_template(dashboard_html,
@@ -326,6 +338,7 @@ def custLogin():
 
             # Check if the password is correct
             if not check_cust_password(password, customer_id[0][0]):
+                print("❌ Incorrect password. Does not match.")
                 logged_in = False
                 alert = False
                 return render_template(dashboard_html,
@@ -333,6 +346,7 @@ def custLogin():
                                        action=action, logged_in=logged_in)
 
             # Login successful
+            print("✅ Customer Login successful.")
             logged_in = True
             current_user_id = customer_id[0][0]
             session['user_id'] = current_user_id
@@ -349,6 +363,7 @@ def custLogin():
     # Get QR code of the customer
     qr_code = get_qr_code(current_user_id, mongo_collection)
     qr_image = qr_code['image']
+    print("✅ Retrieved the QR code of the customer")
 
     # Save the QR code image
     image_path = f"QR_ID_Customer/{current_user_id}.png"
@@ -356,6 +371,7 @@ def custLogin():
 
     # Read the QR code image
     qr_data = read_qr_code(image_path)
+    print("✅ Read the data from the QR code.")
 
     # Delete the QR code image
     os.remove(image_path)
@@ -369,7 +385,10 @@ def custLogin():
 @app.route('/employeeDashboard', methods=['GET', 'POST'])
 def empLogin():
 
+    print("=== In the Employee Dashboard ===")
+
     if request.method == "POST":
+        print("Logging in the employee...")
         print(f"request.form: {request.form}")
         email = request.form['email']
         password = request.form['pass']
@@ -379,14 +398,18 @@ def empLogin():
 
         emp_id = get_empid(email, password)
         if emp_id == None:  # Login unsuccessful
+            print("❌ Login unsuccessful as emp_id is None.")
             logged_in = False
             alert = False
             return render_template(dashboard_html,
                                    alert=alert, name="unsuccessful",
                                    action="login", logged_in=logged_in)
+
+        print("✅ Employee Login successful.")
         session['user_id'] = emp_id
     else:
         alert = False
+
     return render_template(dashboard_html,
                            alert=alert, name="employee",
                            logged_in=logged_in)
@@ -394,16 +417,22 @@ def empLogin():
 
 @app.route('/collections', methods=['GET', 'POST'])
 def cars():
+
+    print("=== In the Cars Collection Page ===")
     return render_template("cars.html")
 
 
 @app.route('/carDetails')
 def carDetails():
+
+    print("=== In the Car Details Page ===")
+
     data = request.args.get('car_id')
     print(f"data: {data}")
 
     # Fetch the details of the selected car from "car_features" table
     fetchdata = read_query(f"SELECT * FROM car_features WHERE car_ID = {data}")
+    print("✅ Fetched the car details.")
 
     car_details = fetchdata[0]  # first car's details
     print(f"car_details: {car_details}")
@@ -413,7 +442,11 @@ def carDetails():
 
 @app.route('/wishlist')
 def wishlist():
+
+    print("=== In the Wishlist Page ===")
+
     if session['user_id'] == 0:  # user is not logged in
+        print("User is not logged in.")
         alert = False
         global name
         name = "dummy_name"
@@ -427,6 +460,7 @@ def wishlist():
     print(f"action: {action}")
 
     if action == "1":  # buy the car from the wishlist
+        print("Buying the car from the wishlist...")
         sale_date = date.today()
         final_price = request.args.get('final_price')
         if mode:
@@ -443,14 +477,17 @@ def wishlist():
             f"DELETE FROM car_ownership WHERE owner_cust_id = '{session['user_id']}' and owned_car_id = {car_id}")
         write_query(
             f"INSERT INTO sale VALUES('{sale_id}','{sale_date}',{final_price},'{payment_method}','{sale_to_cust_id}',{sale_by_emp_id},{sale_involved_car_id})")
+        print("✅ Bought the car from the wishlist.")
 
     elif action == "0":  # delete the car from the wishlist
         write_query(
             f"DELETE FROM car_ownership WHERE owner_cust_id = '{session['user_id']}' and owned_car_id = {car_id}")
+        print("✅ Deleted the car from the wishlist.")
     elif car_id != None:  # add the car to the wishlist
         assign_emp_id = get_emp_ids()
         write_query(
             f"INSERT INTO car_ownership VALUES('{session['user_id']}',{car_id},{assign_emp_id})")
+        print("✅ Added the car to the wishlist.")
 
     data = get_wishlist_data()
     return render_template("wishlist.html", data=data, key=stripe_keys['publishable_key'])
@@ -465,13 +502,15 @@ def gen_sale_id(cust_id, car_id, emp_id):
 def get_emp_who_sold(cust_id, car_id):
     fetchdata = read_query(
         f"SELECT emp_ID FROM car_ownership where owner_cust_id = '{cust_id}' and owned_car_id = {car_id}")
-
     emp_id = fetchdata[0][0]
     return emp_id
 
 
 @app.route('/charge', methods=['POST'])
 def charge():
+
+    print("=== In the Charge Page ===")
+
     # Amount in cents
     amount = 1000
 
@@ -504,12 +543,14 @@ def sales():
 def get_sale_data(emp_id):
     fetchdata = read_query(
         f"SELECT car_name, Name, final_price, sale_date, payment_method, image_link FROM sale INNER JOIN customer ON sale_to_cust_id = customer_ID INNER JOIN car_features ON sale_involved_car_id = car_ID WHERE sale_by_emp_id = {emp_id}")
-
     return fetchdata
 
 
 @app.route('/profile')
 def profile():
+
+    print("=== In the Profile Page ===")
+
     cust_data = customer_data()
     bought_data = get_bought_car_data()
     return render_template("profile_user.html", cust_data=cust_data, bought_data=bought_data)
@@ -517,13 +558,18 @@ def profile():
 
 @app.route('/appointments', methods=['GET', 'POST'])
 def appointments():
+
+    print("=== In the Appointments Page ===")
+
     temp_app_id = request.args.get('app_id')
     bypass = request.args.get('action')
 
     if bypass == "0":  # delete the appointment
         delete_appointment(temp_app_id)
+        print("✅ Deleted the appointment.")
 
     if session['user_id'] == 0:  # user is not logged in
+        print("User is not logged in.")
         global name
         name = "dummy_name"
         return redirect("/")
@@ -538,6 +584,7 @@ def appointments():
         app_id = generate_app_id(session['user_id'], car_id, date)
         create_appointment(app_id, date, time, emp_id,
                            session['user_id'], car_id)
+        print("✅ Created a new appointment.")
 
         print(f"{date} : {time}")
         print(f"car_id: {car_id}")
@@ -550,6 +597,9 @@ def appointments():
 
 @app.route('/emp_profile')
 def emp_profile():
+
+    print("=== In the Employee Profile Page ===")
+
     emp_data = get_emp_data()
     sold_data = get_sold_data()
     incentive = calc_emp_incentive()
@@ -558,35 +608,44 @@ def emp_profile():
 
 @app.route('/enter_review', methods=['GET', 'POST'])
 def enter_review():
-    if request.method == 'POST':
+
+    print("=== In the Enter Review Page ===")
+
+    if request.method == 'POST':  # Push the review
         des = request.form['des']
         rating = request.form['rating']
-        print(des)
-        print(rating)
-        print(session['emp_id'])
-        print(session['car_id'])
+        print(f"des: {des}")
+        print(f"rating: {rating}")
+        print(f"emp_id: {session['emp_id']}")
+        print(f"car_id: {session['car_id']}")
         push_review(des, rating)
-    else:
+        print("✅ Pushed the review.")
+    else:  # Display the review form
         emp_id = request.args.get('emp_id')
-        print(request.args)
+        print(f"request.args: {request.args}")
         session['emp_id'] = request.args.get('emp_id')
         session['car_id'] = request.args.get('car_id')
-        print(emp_id)
+        print(f"emp_id: {emp_id}")
+
     return render_template('write_review.html')
 
 
 @app.route('/reviews')
 def reviews():
+
+    print("=== In the Reviews Page ===")
+
     data = fetch_reviews()
-    print(data)
+    print("✅ Fetched the reviews.")
+    print(f"data: {data}")
     return render_template('reviews.html', data=data)
 
 
 @app.route('/backend-operation')
 def backend_operation():
     # Perform backend operations here
+    print("=== In the Backend Operation Page ===")
     backend_data = "Backend operations performed successfully."
-    print("lol")
     car_id = request.args.get('car_id')
     action = request.args.get('action')
     final_price = request.args.get('final_price')
@@ -597,98 +656,92 @@ def backend_operation():
 def analysis():
     """
     Uses nested SQL Queries to perform various permutations & combinations of the data analysis such as:
-    Basic Statistics:
-    - Total Employees
-    - Total Customers
-    - Total Cars in Stock
-    - Average Price of Cars
-    - Total Cars Sold
-    - Total Cars in Wishlist
-    - Total Sales
-    - Total Revenue
-    - Total Appointments
-    Advanced Statistics:
-    - Most Sold Car
-    - Most Sold Car by a Particular Employee
-    - Customer with most cars in Wishlist
-    - Customer with most cars bought
-    - Employee with most sales
-    - Employee with most appointments
+    - `Basic Statistics`
+        - Total Employees
+        - Total Customers
+        - Total Cars in Stock
+        - Average Price of Cars
+        - Total Cars Sold
+        - Total Cars in Wishlist
+        - Total Sales
+        - Total Revenue
+        - Total Appointments
+
+    - `Advanced Statistics`
+        - Most Sold Car
+        - Most Sold Car by a Particular Employee
+        - Customer with most cars in Wishlist
+        - Customer with most cars bought
+        - Employee with most sales
+        - Employee with most appointments
     """
 
-    # Basic Statistics
+    statistics = {}
+
+    # * Basic Statistics
 
     # Total Employees
-    total_employees = read_query("SELECT COUNT(*) FROM employee")[0][0]
+    statistics["total_employees"] = read_query(
+        "SELECT COUNT(*) FROM employee")[0][0]
 
     # Total Customers
-    total_customers = read_query("SELECT COUNT(*) FROM customer")[0][0]
+    statistics["total_customers"] = read_query(
+        "SELECT COUNT(*) FROM customer")[0][0]
 
     # Total Cars in Stock
-    total_cars = read_query("SELECT COUNT(*) FROM car_features")[0][0]
+    statistics["total_cars"] = read_query(
+        "SELECT COUNT(*) FROM car_features")[0][0]
 
     # Average Price of Cars
-    avg_price = read_query("SELECT AVG(price) FROM car_features")[0][0]
+    statistics["avg_price"] = read_query(
+        "SELECT AVG(price) FROM car_features")[0][0]
 
     # Total Cars Sold
-    total_cars_sold = read_query("SELECT COUNT(*) FROM sale")[0][0]
+    statistics["total_cars_sold"] = read_query(
+        "SELECT COUNT(*) FROM sale")[0][0]
 
     # Total Cars in Wishlist
-    total_wishlist_cars = read_query(
+    statistics["total_wishlist_cars"] = read_query(
         "SELECT COUNT(*) FROM car_ownership")[0][0]
 
     # Total Sales
-    total_sales = read_query("SELECT COUNT(*) FROM sale")[0][0]
+    statistics["total_sales"] = read_query("SELECT COUNT(*) FROM sale")[0][0]
 
     # Total Revenue
-    total_revenue = read_query("SELECT SUM(final_price) FROM sale")[0][0]
+    statistics["total_revenue"] = read_query(
+        "SELECT SUM(final_price) FROM sale")[0][0]
 
     # Total Appointments
-    total_appointments = read_query("SELECT COUNT(*) FROM appointment")[0][0]
+    statistics["total_appointments"] = read_query(
+        "SELECT COUNT(*) FROM appointment")[0][0]
 
-    # Advanced Statistics
+    # * Advanced Statistics
 
     # Most Sold Car
-    most_sold_car = read_query(
+    statistics["most_sold_car"] = read_query(
         "SELECT car_name, COUNT(sale_involved_car_id) FROM sale INNER JOIN car_features ON sale_involved_car_id = car_ID GROUP BY sale_involved_car_id ORDER BY COUNT(sale_involved_car_id) DESC LIMIT 1")[0]
 
     # Most Sold Car by a Particular Employee
-    most_sold_car_by_emp = read_query(
+    statistics["most_sold_car_by_emp"] = read_query(
         "SELECT Name, COUNT(sale_involved_car_id) FROM sale INNER JOIN employee ON sale_by_emp_id = emp_ID GROUP BY sale_by_emp_id ORDER BY COUNT(sale_involved_car_id) DESC LIMIT 1")[0]
 
     # Customer with most cars in Wishlist
-    cust_most_wishlist = read_query(
+    statistics["cust_most_wishlist"] = read_query(
         "SELECT owner_cust_id, COUNT(owned_car_id) FROM car_ownership GROUP BY owner_cust_id ORDER BY COUNT(owned_car_id) DESC LIMIT 1")[0]
 
     # Customer with most cars bought
-    cust_most_bought = read_query(
+    statistics["cust_most_bought"] = read_query(
         "SELECT sale_to_cust_id, COUNT(sale_involved_car_id) FROM sale GROUP BY sale_to_cust_id ORDER BY COUNT(sale_involved_car_id) DESC LIMIT 1")[0]
 
     # Employee with most sales
-    emp_most_sales = read_query(
+    statistics["emp_most_sales"] = read_query(
         "SELECT sale_by_emp_id, COUNT(sale_involved_car_id) FROM sale GROUP BY sale_by_emp_id ORDER BY COUNT(sale_involved_car_id) DESC LIMIT 1")[0]
 
     # Employee with most appointments
-    emp_most_appointments = read_query(
+    statistics["emp_most_appointments"] = read_query(
         "SELECT handling_emp_id, COUNT(app_ID) FROM appointment GROUP BY handling_emp_id ORDER BY COUNT(app_ID) DESC LIMIT 1")[0]
 
-    statistics = {
-        "total_employees": total_employees,
-        "total_customers": total_customers,
-        "total_cars": total_cars,
-        "avg_price": avg_price,
-        "total_cars_sold": total_cars_sold,
-        "total_wishlist_cars": total_wishlist_cars,
-        "total_sales": total_sales,
-        "total_revenue": total_revenue,
-        "total_appointments": total_appointments,
-        "most_sold_car": most_sold_car,
-        "most_sold_car_by_emp": most_sold_car_by_emp,
-        "cust_most_wishlist": cust_most_wishlist,
-        "cust_most_bought": cust_most_bought,
-        "emp_most_sales": emp_most_sales,
-        "emp_most_appointments": emp_most_appointments
-    }
+    print("✅ Successfully performed the data analysis.")
     print(f"statistics: {statistics}")
 
     return render_template("analysis.html", statistics=statistics)
@@ -810,9 +863,7 @@ def check_cust_password(password, customer_id):
 
     fetchdata = read_query(
         f"SELECT Encrypted_Password FROM customer WHERE customer_ID = '{customer_id}'")
-
-    check = check_password(password, fetchdata[0][0])
-    return check
+    return check_password(password, fetchdata[0][0])
 
 
 def get_empid(email, password):
