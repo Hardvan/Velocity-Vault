@@ -62,7 +62,7 @@ def save_qr_code(user_id, user, folder='QR_ID'):
 
     # Add caption text
     draw = ImageDraw.Draw(img_with_caption)
-    font_path = "./fonts/Roboto-Regular.ttf"
+    font_path = "Prototype/fonts/Roboto-Regular.ttf"
     font_size = 15
     font = ImageFont.truetype(font_path, font_size)
     caption = f"Employee ID: {user_id}" if user == 'E' else f"Customer ID: {user_id}"
@@ -79,7 +79,7 @@ def save_qr_code(user_id, user, folder='QR_ID'):
         img_with_borders, border=spacing, fill='white')
 
     # Offset the employee logo by 5 pixels from the top
-    logo_path = "./static/images/emp_logo2.jpg" if user == 'E' else "./static/images/cust_logo.png"
+    logo_path = "Prototype/static/images/emp_logo2.jpg" if user == 'E' else "Prototype/static/images/cust_logo.png"
     if os.path.exists(logo_path):
         logo = Image.open(logo_path)
         logo = logo.resize((50, 50))  # Adjust the size as needed
