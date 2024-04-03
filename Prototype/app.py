@@ -8,6 +8,7 @@ from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 import base64
 import stripe
+import threading
 
 # Custom modules
 from QR_Generator import generate_customer_id, generate_employee_id, save_qr_code
@@ -15,6 +16,7 @@ from QR_Reader import read_qr_code
 from CRUD_QR import add_qr_code, get_qr_code, update_qr_code, delete_qr_code
 from HuggingFace import sentiment_analysis, summarize_text
 from password_manager import hash_password, check_password
+import whatsapp_message
 
 # Load the environment variables
 import os
@@ -59,6 +61,9 @@ mongo_collection = mongo_db['qr_codes']
 # Testing Parameters
 TEST_CONNECTION = True  # ? Test/Don't test the connection to MongoDB
 TEST_CRUD_QR_CODE = True  # ? Test/Don't test the CRUD operations for the QR codes
+
+# WhatsApp & Email Parameters
+WHATSAPP = False  # ? Send/Don't send the WhatsApp message
 
 
 # Send a ping to confirm a successful connection
@@ -479,6 +484,13 @@ def wishlist():
             f"INSERT INTO sale VALUES('{sale_id}','{sale_date}',{final_price},'{payment_method}','{sale_to_cust_id}',{sale_by_emp_id},{sale_involved_car_id})")
         print("✅ Bought the car from the wishlist.")
 
+        # Send a WhatsApp message using a thread
+        if WHATSAPP:
+            text = f"Congratulations 🎉! You have successfully bought the car. The details are: {sale_id}, {sale_date}, {final_price}, {payment_method}, {sale_to_cust_id}, {sale_by_emp_id}, {sale_involved_car_id}"
+            t_whatsapp = threading.Thread(
+                target=ThreadSendWhatsapp, args=(text,))
+            t_whatsapp.start()
+
     elif action == "0":  # delete the car from the wishlist
         write_query(
             f"DELETE FROM car_ownership WHERE owner_cust_id = '{session['user_id']}' and owned_car_id = {car_id}")
@@ -491,6 +503,17 @@ def wishlist():
 
     data = get_wishlist_data()
     return render_template("wishlist.html", data=data, key=stripe_keys['publishable_key'])
+
+
+def ThreadSendWhatsapp(text):
+    """Send the text message to WhatsApp using a thread to prevent the program from freezing.
+
+    Args
+    ----
+    - `text`: The message to be sent.
+    """
+
+    whatsapp_message.SendMessage(text)
 
 
 def gen_sale_id(cust_id, car_id, emp_id):
