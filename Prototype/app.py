@@ -16,52 +16,50 @@ from CRUD_QR import add_qr_code, get_qr_code, update_qr_code, delete_qr_code
 from HuggingFace import sentiment_analysis, summarize_text
 from password_manager import hash_password, check_password
 
-
+# Load the environment variables
 import os
 from dotenv import load_dotenv
 load_dotenv()
 
-
+# Flask app
 app = Flask(__name__)
 
-# SQL Configuration
+# * SQL Configuration
 app.secret_key = 'lololol898989'
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
 app.config['MYSQL_DB'] = 'car_showroom'
-
-# User variables
-logged_in = False  # ? True/False: User is logged in or not
-current_user_type = "blank"  # ? "customer"/"employee": Type of the current user
-customer_id = "none"  # ? "customer_id": ID of the current customer
-name = "none"  # ? "name": Name of the current user
-
 mysql = MySQL(app)
 
+# * User variables
+logged_in = False  # ? True/False: User is logged in or not
+current_user_type = "blank"  # ? "customer"/"employee": Type of the current user
+customer_id = "none"  # ? ID of the current customer
+name = "none"  # ? Name of the current user
+
+# * Stripe keys
 stripe_keys = {
-    "secret_key": "sk_test_51OqBUDSDxbyR6TDXKq1yk8FCTIRGukANTOgdCUyChhRf4YmoqubpGmDo0JSdxSkEMjxEklUIZECY61bRPzjlgFpD00yfhA9sr7",
+    "secret_key": os.getenv("STRIPE_SECRET_KEY"),
     "publishable_key": "pk_test_51OqBUDSDxbyR6TDXyVusFbV7IChPwvs8PzdP6AXt65JSi9gObEyC66XB33oKuf4UvXSgaIk9gB8TqDmKQLrnlfFY00opHauWOd",
 }
-
 stripe.api_key = stripe_keys["secret_key"]
+
+
+# * MongoDB setup
+mongo_db = None
+mongo_collection = None
+mongodb_uri = os.getenv("MONGODB_URI")
+client = MongoClient(mongodb_uri, server_api=ServerApi('1'))
+# Select the database and collection
+mongo_db = client['DBMS_db']
+mongo_collection = mongo_db['qr_codes']
 
 
 # Testing Parameters
 TEST_CONNECTION = True  # ? Test/Don't test the connection to MongoDB
 TEST_CRUD_QR_CODE = True  # ? Test/Don't test the CRUD operations for the QR codes
 
-# Define mongo_db and collection as placeholders
-mongo_db = None
-mongo_collection = None
-
-# MongoDB connection
-mongodb_uri = os.getenv("MONGODB_URI")
-client = MongoClient(mongodb_uri, server_api=ServerApi('1'))
-
-# Select the database and collection
-mongo_db = client['DBMS_db']
-mongo_collection = mongo_db['qr_codes']
 
 # Send a ping to confirm a successful connection
 if TEST_CONNECTION:
@@ -145,7 +143,13 @@ def read_query(query):
 
     Args
     ----
-    - query (str): The SQL query to execute.
+    - `query`: The SQL query string to execute.
+
+    Performs
+    --------
+    - Executes the query
+    - Fetches the result
+    - Closes the cursor
 
     Returns
     -------
@@ -166,7 +170,13 @@ def write_query(query):
 
     Args
     ----
-    - query (str): The SQL query to execute.
+    - `query`: The SQL query string to execute.
+
+    Performs
+    --------
+    - Executes the query
+    - Commits the changes
+    - Closes the cursor
     """
 
     cur = mysql.connection.cursor()
