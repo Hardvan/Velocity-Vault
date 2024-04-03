@@ -61,3 +61,17 @@ To access the prototype, follow the steps below:
    ```bash
    Running on http://127.0.0.1:5000
    ```
+
+## Running the App
+
+1. Open XAMPP and start the Apache and MySQL services.
+
+   If MySql is giving an error, go to services & stop the MySql service and start it again.
+
+2. Open the [phpMyAdmin](http://localhost/phpmyadmin/index.php?lang=en)
+
+3. Create a new database named `car_showroom`.
+
+4. **Import** the `car_showroom.sql` file into the database.
+
+5. Open MongoDB in the browser.
