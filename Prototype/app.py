@@ -27,7 +27,7 @@ app.secret_key = 'lololol898989'
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = ''
-app.config['MYSQL_DB'] = 'carshowroom'
+app.config['MYSQL_DB'] = 'car_showroom'
 
 # User variables
 logged_in = False  # ? True/False: User is logged in or not
@@ -110,7 +110,7 @@ if TEST_CRUD_QR_CODE:
     print("=== Testing CRUD Operations for QR Codes ===")
 
     user_id = 'charlie_3210_2757'
-    image_path = './QR_ID_Customer/charlie_3210_2757.png'
+    image_path = 'Prototype/QR_ID_Customer/charlie_3210_2757.png'
 
     # Create
     add_qr_code(user_id, image_path, 'C', mongo_collection)
@@ -249,11 +249,11 @@ def custLogin():
                 f"INSERT INTO customer VALUES('{customer_id}','{name}', {age}, {phone}, '{email}', '{date.today()}', '{password}')")
 
             # Create the QR code of the customer
-            image_path = save_qr_code(
-                customer_id, user="C", folder="QR_ID_Customer")
+            #image_path = save_qr_code(
+            #    customer_id, user="C", folder="QR_ID_Customer")
 
             # Add the new QR code to the collection "qr_codes"
-            add_qr_code(customer_id, image_path, "C", mongo_collection)
+            #add_qr_code(customer_id, image_path, "C", mongo_collection)
 
             # #Save the customer ID in the session      
 
@@ -295,12 +295,13 @@ def custLogin():
         alert = False
 
     # Get QR code of the customer
-    qr_code = get_qr_code(current_user_id, mongo_collection)
-    qr_image = qr_code['image']
+    #qr_code = get_qr_code(current_user_id, mongo_collection)
+    #qr_image = qr_code['image']
+        # qr_image=qr_image
 
     return render_template(dashboard_html,
                            alert=alert, name="customer",
-                           action=action, logged_in=logged_in, qr_image=qr_image)
+                           action=action, logged_in=logged_in,)
 
 
 @app.route('/employeeDashboard', methods=['GET', 'POST'])
