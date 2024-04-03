@@ -1,3 +1,10 @@
+"""
+Functions present:
+- generate_employee_id(name, age, gender, salary)
+- generate_customer_id(name, age, phone)
+- save_qr_code(user_id, user, folder)
+"""
+
 import random
 import qrcode
 from PIL import Image, ImageDraw, ImageFont, ImageOps
@@ -23,15 +30,15 @@ def save_qr_code(user_id, user, folder='QR_ID'):
     """Generates a QR code with the given user ID and saves it to the specified folder.
 
     Args:
-        user_id (str): The user ID to be encoded in the QR code.
-        user (str): The type of user. Either 'E' for employee or 'C' for customer.
-        folder (str, optional): The folder to save the QR code to. Defaults to 'QR_ID'.
+    - `user_id`: The user ID to be encoded in the QR code.
+    - `user`: The type of user. Either 'E' for employee or 'C' for customer.
+    - `folder`: The folder to save the QR code to. Defaults to 'QR_ID'.
 
     Returns:
-        str: The path to the saved QR code.
+    - str: The path to the saved QR code.
 
     Raises:
-        FileNotFoundError: If the logo for the user is not found.
+    - FileNotFoundError: If the logo for the user is not found.
     """
 
     # Create folder if it doesn't exist
@@ -91,22 +98,25 @@ def save_qr_code(user_id, user, folder='QR_ID'):
 
 if __name__ == "__main__":
 
-    # Example usage
-    # Employee
-    name = "Bob"
-    age = 30
-    gender = "Male"
-    salary = 50000
+    def test_qr_generation():
 
-    employee_id = generate_employee_id(name, age, gender, salary)
-    print("Generated Employee ID:", employee_id)
-    save_qr_code(employee_id, user='E', folder='QR_ID_Employee')
+        print("\nTesting QR code generation...\n")
 
-    # Customer
-    name = "Charlie"
-    age = 25
-    phone = "9876543210"
+        # Employee
+        name = "Bob"
+        age = 30
+        gender = "Male"
+        salary = 50000
+        employee_id = generate_employee_id(name, age, gender, salary)
+        print(f"Generated Employee ID: {employee_id}\n")
+        save_qr_code(employee_id, user='E', folder='test/QR_ID_Employee')
 
-    customer_id = generate_customer_id(name, age, phone)
-    print("Generated Customer ID:", customer_id)
-    save_qr_code(customer_id, user='C', folder='QR_ID_Customer')
+        # Customer
+        name = "Charlie"
+        age = 25
+        phone = "9876543210"
+        customer_id = generate_customer_id(name, age, phone)
+        print(f"Generated Customer ID: {customer_id}")
+        save_qr_code(customer_id, user='C', folder='test/QR_ID_Customer')
+
+    test_qr_generation()

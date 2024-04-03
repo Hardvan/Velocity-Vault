@@ -1,18 +1,18 @@
 import base64
 
 # ? CRUD operations for the QR codes
+
+
 # * Create
-
-
 def add_qr_code(user_id, image_path, user, mongo_collection):
     """Converts the image into base64 and adds a new QR code to the collection "qr_codes".
 
     Args
     ----
-    - user_id (str): The user ID of the QR code.
-    - image_path (str): The path of the image.
-    - user (str): The type of user. Either 'E' for employee or 'C' for customer.
-    - mongo_collection (pymongo.collection.Collection): The collection "qr_codes" in the MongoDB database.
+    - `user_id`: The user ID of the QR code.
+    - `image_path`: The path of the image.
+    - `user`: The type of user. Either 'E' for employee or 'C' for customer.
+    - `mongo_collection`: The collection "qr_codes" in the MongoDB database.
     """
 
     # Convert the image into base64
@@ -33,8 +33,8 @@ def get_qr_code(user_id, mongo_collection):
 
     Args
     ----
-    - user_id (str): The user ID of the QR code.
-    - mongo_collection (pymongo.collection.Collection): The collection "qr_codes" in the MongoDB database.
+    - `user_id`: The user ID of the QR code.
+    - `mongo_collection`: The collection "qr_codes" in the MongoDB database.
 
     Returns
     -------
@@ -54,9 +54,9 @@ def update_qr_code(user_id, image_path, mongo_collection):
 
     Args
     ----
-    - user_id (str): The user ID of the QR code.
-    - image_path (str): The path of the image.
-    - mongo_collection (pymongo.collection.Collection): The collection "qr_codes" in the MongoDB database.
+    - `user_id`: The user ID of the QR code.
+    - `image_path`: The path of the image.
+    - `mongo_collection`: The collection "qr_codes" in the MongoDB database.
     """
 
     # Convert the image into base64
@@ -75,8 +75,8 @@ def delete_qr_code(user_id, mongo_collection):
 
     Args
     ----
-    - user_id (str): The user ID of the QR code.
-    - mongo_collection (pymongo.collection.Collection): The collection "qr_codes" in the MongoDB database.
+    - `user_id`: The user ID of the QR code.
+    - `mongo_collection`: The collection "qr_codes" in the MongoDB database.
     """
 
     # Delete the QR code from the collection

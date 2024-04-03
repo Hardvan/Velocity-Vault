@@ -8,7 +8,7 @@ def sentiment_analysis(text):
 
     Args
     ----
-    - text (str): The input text to analyze.
+    - `text`: The input text to analyze.
 
     Returns
     -------
@@ -26,7 +26,7 @@ def summarize_text(text):
 
     Args
     ----
-    - text (str): The input text to summarize.
+    - `text`: The input text to summarize.
 
     Returns
     -------

@@ -10,7 +10,8 @@ import base64
 import stripe
 
 # Custom modules
-from QR_OCR_Generator import generate_customer_id, generate_employee_id, save_qr_code
+from QR_Generator import generate_customer_id, generate_employee_id, save_qr_code
+from QR_Reader import read_qr_code
 from CRUD_QR import add_qr_code, get_qr_code, update_qr_code, delete_qr_code
 from HuggingFace import sentiment_analysis, summarize_text
 from password_manager import hash_password, check_password
@@ -339,9 +340,20 @@ def custLogin():
     qr_code = get_qr_code(current_user_id, mongo_collection)
     qr_image = qr_code['image']
 
+    # Save the QR code image
+    image_path = f"QR_ID_Customer/{current_user_id}.png"
+    save_qr_image(qr_image, image_path)
+
+    # Read the QR code image
+    qr_data = read_qr_code(image_path)
+
+    # Delete the QR code image
+    os.remove(image_path)
+
     return render_template(dashboard_html,
                            alert=alert, name="customer",
-                           action=action, logged_in=logged_in, qr_image=qr_image)
+                           action=action, logged_in=logged_in,
+                           qr_image=qr_image, qr_data=qr_data)
 
 
 @app.route('/employeeDashboard', methods=['GET', 'POST'])
