@@ -63,7 +63,7 @@ TEST_CONNECTION = True  # ? Test/Don't test the connection to MongoDB
 TEST_CRUD_QR_CODE = True  # ? Test/Don't test the CRUD operations for the QR codes
 
 # WhatsApp & Email Parameters
-WHATSAPP = False  # ? Send/Don't send the WhatsApp message
+WHATSAPP = True  # ? Send/Don't send the WhatsApp message
 
 
 # Send a ping to confirm a successful connection
@@ -477,6 +477,9 @@ def wishlist():
         sale_involved_car_id = car_id
         sale_id = gen_sale_id(session['user_id'],
                               sale_involved_car_id, sale_by_emp_id)
+        car_name = get_car_name(car_id)
+        emp_name = get_emp_name(sale_by_emp_id)
+        customer_name = get_cust_name(sale_to_cust_id)
 
         write_query(
             f"DELETE FROM car_ownership WHERE owner_cust_id = '{session['user_id']}' and owned_car_id = {car_id}")
@@ -486,7 +489,19 @@ def wishlist():
 
         # Send a WhatsApp message using a thread
         if WHATSAPP:
-            text = f"Congratulations 🎉! You have successfully bought the car. The details are: {sale_id}, {sale_date}, {final_price}, {payment_method}, {sale_to_cust_id}, {sale_by_emp_id}, {sale_involved_car_id}"
+            text = f"""Congratulations 🎉! You have successfully bought the car. The details are:
+
+*Car Name*: {car_name}
+*Sale ID*: {sale_id}
+*Sale Date*: {sale_date}
+*Final Price*: {final_price}
+*Payment Method*: {payment_method}
+*Sale To Customer ID*: {sale_to_cust_id}
+*Sale By Employee ID*: {sale_by_emp_id}
+*Sale Involved Car ID*: {sale_involved_car_id}
+*Employee Name*: {emp_name}
+*Customer Name*: {customer_name}
+"""
             t_whatsapp = threading.Thread(
                 target=ThreadSendWhatsapp, args=(text,))
             t_whatsapp.start()
@@ -527,6 +542,24 @@ def get_emp_who_sold(cust_id, car_id):
         f"SELECT emp_ID FROM car_ownership where owner_cust_id = '{cust_id}' and owned_car_id = {car_id}")
     emp_id = fetchdata[0][0]
     return emp_id
+
+
+def get_car_name(car_id):
+    fetchdata = read_query(
+        f"SELECT car_name FROM car_features WHERE car_ID = {car_id}")
+    return fetchdata[0][0]
+
+
+def get_emp_name(emp_id):
+    fetchdata = read_query(
+        f"SELECT Name FROM employee WHERE emp_ID = {emp_id}")
+    return fetchdata[0][0]
+
+
+def get_cust_name(cust_id):
+    fetchdata = read_query(
+        f"SELECT Name FROM customer WHERE customer_ID = '{cust_id}'")
+    return fetchdata[0][0]
 
 
 @app.route('/charge', methods=['POST'])
