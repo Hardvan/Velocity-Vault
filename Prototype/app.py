@@ -202,6 +202,11 @@ def write_query(query):
 # /charge: Charges the user for the car
 # /sales: Displays the sales page
 # /appointments: Displays the appointments page
+# /emp_profile: Displays the employee profile page
+# /enter_review: Allows the user to enter a review
+# /reviews: Displays the reviews page
+# /backend-operation: Performs backend operations
+# /analysis: Displays the analysis page
 
 
 @app.route('/', methods=['GET', 'POST'])
