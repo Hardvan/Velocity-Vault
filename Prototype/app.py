@@ -9,6 +9,7 @@ from pymongo.server_api import ServerApi
 import base64
 import stripe
 import threading
+import mail
 
 # Custom modules
 from QR_Generator import generate_customer_id, generate_employee_id, save_qr_code
@@ -321,6 +322,18 @@ def custLogin():
             session['user_id'] = current_user_id
             logged_in = True
 
+            text = f"""Congratulations 🎉! You have successfully Created Your Velocity Vault Account.
+
+Here are your credentials ->
+    Username: {name}
+    Password: {password}
+
+This E-mail/ number will be used for all official communications from our platform
+"""
+            t_whatsapp = threading.Thread(
+                target=ThreadSendWhatsapp, args=(text, ""))
+            t_whatsapp.start()
+
         # * Logging in the user
         else:
             print("Logging in the user...")
@@ -489,6 +502,7 @@ def wishlist():
 
         # Send a WhatsApp message using a thread
         if WHATSAPP:
+            path = get_url(car_id)
             text = f"""Congratulations 🎉! You have successfully bought the car. The details are:
 
 *Customer Name*: {customer_name}
@@ -503,7 +517,7 @@ def wishlist():
 *Sale Involved Car ID*: {sale_involved_car_id}
 """
             t_whatsapp = threading.Thread(
-                target=ThreadSendWhatsapp, args=(text,))
+                target=ThreadSendWhatsapp, args=(text, path))
             t_whatsapp.start()
 
     elif action == "0":  # delete the car from the wishlist
@@ -519,15 +533,22 @@ def wishlist():
     data = get_wishlist_data()
     return render_template("wishlist.html", data=data, key=stripe_keys['publishable_key'])
 
+def get_url(car_id):
+    fetchdata = read_query(f"SELECT image_link FROM car_features WHERE car_ID = {car_id}")
+    print(fetchdata[0][0])
+    return fetchdata[0][0]
 
-def ThreadSendWhatsapp(text):
+def ThreadSendWhatsapp(text, path):
     """Send the text message to WhatsApp using a thread to prevent the program from freezing.
 
     Args
     ----
     - `text`: The message to be sent.
     """
-
+    if path == "":
+        mail.send_emailz(text)
+    else:    
+        mail.send_emails(text, path)
     whatsapp_message.SendMessage(text)
 
 
