@@ -62,7 +62,7 @@ def save_qr_code(user_id, user, folder='QR_ID'):
 
     # Add caption text
     draw = ImageDraw.Draw(img_with_caption)
-    font_path = "Prototype/fonts/Roboto-Regular.ttf"
+    font_path = "./fonts/Roboto-Regular.ttf"
     font_size = 15
     font = ImageFont.truetype(font_path, font_size)
     caption = f"Employee ID: {user_id}" if user == 'E' else f"Customer ID: {user_id}"
