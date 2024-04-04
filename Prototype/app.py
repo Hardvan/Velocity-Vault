@@ -116,7 +116,7 @@ if TEST_CRUD_QR_CODE:
     print("=== Testing CRUD Operations for QR Codes ===")
 
     user_id = 'charlie_3210_2757'
-    image_path = 'Prototype/QR_ID_Customer/charlie_3210_2757.png'
+    image_path = './QR_ID_Customer/charlie_3210_2757.png'
 
     # Create
     add_qr_code(user_id, image_path, 'C', mongo_collection)
