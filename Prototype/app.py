@@ -805,9 +805,12 @@ def analysis():
         "SELECT Name, COUNT(sale_involved_car_id) FROM sale INNER JOIN employee ON sale_by_emp_id = emp_ID GROUP BY sale_by_emp_id ORDER BY COUNT(sale_involved_car_id) DESC LIMIT 1")[0]
 
     # Customer with most cars in Wishlist
-    statistics["cust_most_wishlist"] = read_query(
-        "SELECT owner_cust_id, COUNT(owned_car_id) FROM car_ownership GROUP BY owner_cust_id ORDER BY COUNT(owned_car_id) DESC LIMIT 1")[0]
-
+    temp = read_query(
+        "SELECT owner_cust_id, COUNT(owned_car_id) FROM car_ownership GROUP BY owner_cust_id ORDER BY COUNT(owned_car_id) DESC LIMIT 1")
+    if temp == ():
+        statistics["cust_most_wishlist"] = temp
+    else: 
+        statistics["cust_most_wishlist"] = temp[0]
     # Customer with most cars bought
     statistics["cust_most_bought"] = read_query(
         "SELECT sale_to_cust_id, COUNT(sale_involved_car_id) FROM sale GROUP BY sale_to_cust_id ORDER BY COUNT(sale_involved_car_id) DESC LIMIT 1")[0]
@@ -823,7 +826,7 @@ def analysis():
     print("✅ Successfully performed the data analysis.")
     print(f"statistics: {statistics}")
 
-    return render_template("analysis.html", statistics=statistics)
+    return render_template("admin.html", statistics=statistics)
 
 
 def fetch_reviews():
