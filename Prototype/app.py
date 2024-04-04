@@ -793,7 +793,8 @@ def analysis():
         "SELECT COUNT(*) FROM car_ownership")[0][0]
 
     # Total Sales
-    statistics["total_sales"] = read_query("SELECT COUNT(*) FROM sale")[0][0]
+    statistics["total_sales"] = read_query(
+        "SELECT COUNT(*) FROM sale")[0][0]
 
     # Total Revenue
     statistics["total_revenue"] = read_query(
