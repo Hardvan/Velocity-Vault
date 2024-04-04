@@ -533,10 +533,13 @@ def wishlist():
     data = get_wishlist_data()
     return render_template("wishlist.html", data=data, key=stripe_keys['publishable_key'])
 
+
 def get_url(car_id):
-    fetchdata = read_query(f"SELECT image_link FROM car_features WHERE car_ID = {car_id}")
+    fetchdata = read_query(
+        f"SELECT image_link FROM car_features WHERE car_ID = {car_id}")
     print(fetchdata[0][0])
     return fetchdata[0][0]
+
 
 def ThreadSendWhatsapp(text, path):
     """Send the text message to WhatsApp using a thread to prevent the program from freezing.
@@ -544,11 +547,12 @@ def ThreadSendWhatsapp(text, path):
     Args
     ----
     - `text`: The message to be sent.
+    - `path`: The path of the image to be sent.
     """
     if path == "":
-        mail.send_emailz(text)
-    else:    
-        mail.send_emails(text, path)
+        mail.send_emails_no_image(text)
+    else:
+        mail.send_emails_with_image(text, path)
     whatsapp_message.SendMessage(text)
 
 

@@ -25,14 +25,18 @@ smtp_server = "smtp.gmail.com"  # Google SMTP Server
 email_from = "spyeyemusk42@gmail.com"
 
 # Define the password (better to reference externally)
-pswd = "yhxu glqz arlk ohng"  # As shown in the video this password is now dead, left in as example only
+# As shown in the video this password is now dead, left in as example only
+pswd = "yhxu glqz arlk ohng"
 
 # name the email subject
 subject = "Sale Confirmed"
 
+
 def is_valid_url(url):
-    regex = r"^(http|https)://[^\s]*$"  # Basic validation regex (can be more strict)
+    # Basic validation regex (can be more strict)
+    regex = r"^(http|https)://[^\s]*$"
     return re.match(regex, url) is not None
+
 
 def secure_open(path):
     if os.path.isfile(path):
@@ -43,7 +47,8 @@ def secure_open(path):
             if response.status_code == 200:
                 return response.raw
             else:
-                print(f"Error: Failed to download file from {path} (Status: {response.status_code})")
+                print(
+                    f"Error: Failed to download file from {path} (Status: {response.status_code})")
                 return None
         except requests.exceptions.RequestException as e:
             print(f"Error: An error occurred while fetching {path}: {e}")
@@ -52,16 +57,17 @@ def secure_open(path):
         print(f"Invalid path: {path}")
         return None
 
-# Define the email function (dont call it email!)
-def send_emails(texts, path):
+
+# Define the email function
+def send_emails_with_image(texts, path):
+
     group_mail = "treemusketeers32@gmail.com"
     hardik_mail = "hardikhpawar.cs21@rvce.edu.in"
     abhishek_mail = "abhishekyadav.cs21@rvce.edu.in"
     harshit_mail = "harshitdhoot.cs21@rvce.edu.in"
     karan_mail = "karansathish.cs21@rvce.edu.in"
-    email_list = [karan_mail]
 
-
+    email_list = [hardik_mail, karan_mail]
 
     for person in email_list:
         # Make the body of the email
@@ -83,7 +89,8 @@ def send_emails(texts, path):
         attachment_package = MIMEBase('application', 'octet-stream')
         attachment_package.set_payload((attachment).read())
         encoders.encode_base64(attachment_package)
-        attachment_package.add_header('Content-Disposition', "attachment; filename= " + filename)
+        attachment_package.add_header(
+            'Content-Disposition', "attachment; filename= " + filename)
         attachment_package.add_header(
             'Content-Disposition', "attachment; filename= " + filename)
         msg.attach(attachment_package)
@@ -109,15 +116,16 @@ def send_emails(texts, path):
     # Close the port
     TIE_server.quit()
 
-def send_emailz(texts):
+
+def send_emails_no_image(texts):
+
     group_mail = "treemusketeers32@gmail.com"
     hardik_mail = "hardikhpawar.cs21@rvce.edu.in"
     abhishek_mail = "abhishekyadav.cs21@rvce.edu.in"
     harshit_mail = "harshitdhoot.cs21@rvce.edu.in"
     karan_mail = "karansathish.cs21@rvce.edu.in"
+
     email_list = [hardik_mail, karan_mail]
-
-
 
     for person in email_list:
         # Make the body of the email
@@ -131,7 +139,6 @@ def send_emailz(texts):
 
         # Attach the body of the message
         msg.attach(MIMEText(body, 'plain'))
-        
 
         # Cast as string
         text = msg.as_string()
