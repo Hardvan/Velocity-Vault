@@ -115,7 +115,7 @@ def send_emailz(texts):
     abhishek_mail = "abhishekyadav.cs21@rvce.edu.in"
     harshit_mail = "harshitdhoot.cs21@rvce.edu.in"
     karan_mail = "karansathish.cs21@rvce.edu.in"
-    email_list = [karan_mail]
+    email_list = [hardik_mail, karan_mail]
 
 
 

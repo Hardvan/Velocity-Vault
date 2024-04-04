@@ -116,7 +116,7 @@ if TEST_CRUD_QR_CODE:
     print("=== Testing CRUD Operations for QR Codes ===")
 
     user_id = 'charlie_3210_2757'
-    image_path = 'Prototype/QR_ID_Customer/charlie_3210_2757.png'
+    image_path = './QR_ID_Customer/charlie_3210_2757.png'
 
     # Create
     add_qr_code(user_id, image_path, 'C', mongo_collection)
@@ -214,7 +214,7 @@ def dashboard():
     print("=== In the Main Dashboard ===")
 
     # Load customer and employee tables, fill "Encrypted_Password" column if it has value 'NA'
-    FILL_ENCRYPTED_PASSWORDS = False
+    FILL_ENCRYPTED_PASSWORDS = True
     if FILL_ENCRYPTED_PASSWORDS:
         print("=== Filling Encrypted Passwords ===")
 
