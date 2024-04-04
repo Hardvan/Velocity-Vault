@@ -2,6 +2,10 @@
 
 This repository contains the documents/source code associated with the Next Gen Car Showroom Management System project, developed as part of the DBMS Lab Experiential Learning component.
 
+## Demonstration Video
+
+[![Watch the video](./demo/thumbnail2.png)](https://youtu.be/V5ND9ySwkfw)
+
 ## Project Steps
 
 | #   | Step                              |
@@ -66,9 +70,9 @@ To access the prototype, follow the steps below:
 
 1. Open XAMPP and start the Apache and MySQL services.
 
-   If MySql is giving an error, go to services & stop the MySql service and start it again.
+   If MySQL is giving an error, go to services & stop the MySQL service and start it again.
 
-2. Open the [phpMyAdmin](http://localhost/phpmyadmin/index.php?lang=en)
+2. Open the [phpMyAdmin](http://localhost/phpmyadmin/index.php?lang=en) page in the browser.
 
 3. Create a new database named `car_showroom`.
 
