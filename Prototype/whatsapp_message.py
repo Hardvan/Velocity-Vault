@@ -32,7 +32,7 @@ def SendMessage(text, refreshed=False):
     }
 
     # List of recipients
-    phone_list = [hardik, karan]
+    phone_list = [hardik, karan, harshit]
     for phone_number in phone_list:
 
         send_to = f"91{phone_number}"  # Start with 91 for Indian numbers

@@ -59,11 +59,10 @@ def send_emails_sale_confirmed(texts, path):
 
     group_mail = "treemusketeers32@gmail.com"
     hardik_mail = "hardikhpawar.cs21@rvce.edu.in"
-    abhishek_mail = "abhishekyadav.cs21@rvce.edu.in"
     harshit_mail = "harshitdhoot.cs21@rvce.edu.in"
     karan_mail = "karansathish.cs21@rvce.edu.in"
 
-    email_list = [hardik_mail, karan_mail]
+    email_list = [hardik_mail, karan_mail, harshit_mail]
 
     subject = "Sale Confirmed"
 
@@ -119,11 +118,10 @@ def send_emails_account_created(texts):
 
     group_mail = "treemusketeers32@gmail.com"
     hardik_mail = "hardikhpawar.cs21@rvce.edu.in"
-    abhishek_mail = "abhishekyadav.cs21@rvce.edu.in"
     harshit_mail = "harshitdhoot.cs21@rvce.edu.in"
     karan_mail = "karansathish.cs21@rvce.edu.in"
 
-    email_list = [hardik_mail, karan_mail]
+    email_list = [hardik_mail, karan_mail, harshit_mail]
 
     subject = "Account Created"
 
