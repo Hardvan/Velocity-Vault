@@ -819,31 +819,32 @@ def analysis():
         "SELECT owner_cust_id, COUNT(owned_car_id) FROM car_ownership GROUP BY owner_cust_id ORDER BY COUNT(owned_car_id) DESC LIMIT 1")
     if temp == ():
         statistics["cust_most_wishlist"] = temp
-    else: 
+    else:
         statistics["cust_most_wishlist"] = temp[0]
+
     # Customer with most cars bought
     var = read_query(
         "SELECT sale_to_cust_id, COUNT(sale_involved_car_id) FROM sale GROUP BY sale_to_cust_id ORDER BY COUNT(sale_involved_car_id) DESC LIMIT 1")[0]
-    
+
     statistics["cust_name"] = (read_query(
         f"SELECT Name from customer where customer_ID = '{var[0]}'")[0][0], var[1])
 
     # Employee with most sales
-    vars = read_query(
+    var = read_query(
         "SELECT sale_by_emp_id, COUNT(sale_involved_car_id) FROM sale GROUP BY sale_by_emp_id ORDER BY COUNT(sale_involved_car_id) DESC LIMIT 1")[0]
-    
+
     statistics["best_emp"] = (read_query(
-        f"SELECT Name from employee where emp_ID = '{vars[0]}'")[0][0], vars[1]) 
+        f"SELECT Name from employee where emp_ID = '{var[0]}'")[0][0], var[1])
 
     # Number of Reviews
     statistics["count_reviews"] = read_query(
         "SELECT COUNT(*) FROM review")[0][0]
-        
+
     # most wishlisted car
     varz = read_query(
         "SELECT owned_car_id, COUNT(*) AS frequency FROM car_ownership GROUP BY owned_car_id ORDER BY frequency DESC LIMIT 1;")[0]
     statistics["most_wish"] = (read_query(
-        f"SELECT car_name from car_features where car_ID = '{varz[0]}'")[0][0], varz[1]) 
+        f"SELECT car_name from car_features where car_ID = '{varz[0]}'")[0][0], varz[1])
 
     # Employee with most appointments
     statistics["emp_most_appointments"] = read_query(
