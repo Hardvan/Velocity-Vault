@@ -28,9 +28,6 @@ email_from = "spyeyemusk42@gmail.com"
 # As shown in the video this password is now dead, left in as example only
 pswd = "yhxu glqz arlk ohng"
 
-# name the email subject
-subject = "Sale Confirmed"
-
 
 def is_valid_url(url):
     # Basic validation regex (can be more strict)
@@ -58,8 +55,7 @@ def secure_open(path):
         return None
 
 
-# Define the email function
-def send_emails_with_image(texts, path):
+def send_emails_sale_confirmed(texts, path):
 
     group_mail = "treemusketeers32@gmail.com"
     hardik_mail = "hardikhpawar.cs21@rvce.edu.in"
@@ -68,6 +64,8 @@ def send_emails_with_image(texts, path):
     karan_mail = "karansathish.cs21@rvce.edu.in"
 
     email_list = [hardik_mail, karan_mail]
+
+    subject = "Sale Confirmed"
 
     for person in email_list:
         # Make the body of the email
@@ -117,7 +115,7 @@ def send_emails_with_image(texts, path):
     TIE_server.quit()
 
 
-def send_emails_no_image(texts):
+def send_emails_account_created(texts):
 
     group_mail = "treemusketeers32@gmail.com"
     hardik_mail = "hardikhpawar.cs21@rvce.edu.in"
@@ -127,7 +125,10 @@ def send_emails_no_image(texts):
 
     email_list = [hardik_mail, karan_mail]
 
+    subject = "Account Created"
+
     for person in email_list:
+
         # Make the body of the email
         body = texts
 

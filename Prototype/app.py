@@ -550,9 +550,9 @@ def ThreadSendWhatsapp(text, path):
     - `path`: The path of the image to be sent.
     """
     if path == "":
-        mail.send_emails_no_image(text)
+        mail.send_emails_account_created(text)
     else:
-        mail.send_emails_with_image(text, path)
+        mail.send_emails_sale_confirmed(text, path)
     whatsapp_message.SendMessage(text)
 
 
