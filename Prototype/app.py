@@ -202,6 +202,11 @@ def write_query(query):
 # /charge: Charges the user for the car
 # /sales: Displays the sales page
 # /appointments: Displays the appointments page
+# /emp_profile: Displays the employee profile page
+# /enter_review: Allows the user to enter a review
+# /reviews: Displays the reviews page
+# /backend-operation: Performs backend operations
+# /analysis: Displays the analysis page
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -533,10 +538,13 @@ def wishlist():
     data = get_wishlist_data()
     return render_template("wishlist.html", data=data, key=stripe_keys['publishable_key'])
 
+
 def get_url(car_id):
-    fetchdata = read_query(f"SELECT image_link FROM car_features WHERE car_ID = {car_id}")
+    fetchdata = read_query(
+        f"SELECT image_link FROM car_features WHERE car_ID = {car_id}")
     print(fetchdata[0][0])
     return fetchdata[0][0]
+
 
 def ThreadSendWhatsapp(text, path):
     """Send the text message to WhatsApp using a thread to prevent the program from freezing.
@@ -544,11 +552,12 @@ def ThreadSendWhatsapp(text, path):
     Args
     ----
     - `text`: The message to be sent.
+    - `path`: The path of the image to be sent.
     """
     if path == "":
-        mail.send_emailz(text)
-    else:    
-        mail.send_emails(text, path)
+        mail.send_emails_account_created(text)
+    else:
+        mail.send_emails_sale_confirmed(text, path)
     whatsapp_message.SendMessage(text)
 
 
