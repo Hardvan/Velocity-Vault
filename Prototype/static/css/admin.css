@@ -1,5 +1,5 @@
 body {
-  background-color: #fbfbfb;
+  background-image: url("/static/images/audi.jpg");
 }
 @media (min-width: 991.98px) {
   main {
