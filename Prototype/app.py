@@ -214,7 +214,7 @@ def dashboard():
     print("=== In the Main Dashboard ===")
 
     # Load customer and employee tables, fill "Encrypted_Password" column if it has value 'NA'
-    FILL_ENCRYPTED_PASSWORDS = False
+    FILL_ENCRYPTED_PASSWORDS = True
     if FILL_ENCRYPTED_PASSWORDS:
         print("=== Filling Encrypted Passwords ===")
 
