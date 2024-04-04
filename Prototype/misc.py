@@ -1,5 +1,6 @@
 import bcrypt
 
+
 def hash_password(password):
     """Hashes the password using bcrypt algorithm.
 
@@ -15,5 +16,6 @@ def hash_password(password):
     hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
     print(str(hashed_password)[2:-1])
     return str(hashed_password)[2:-1]  # Removing b'' from the hashed password
+
 
 hash_password("an27")
