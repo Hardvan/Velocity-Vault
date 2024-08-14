@@ -18,4 +18,5 @@ def hash_password(password):
     return str(hashed_password)[2:-1]  # Removing b'' from the hashed password
 
 
-hash_password("an27")
+if __name__ == '__main__':
+    hash_password("an27")

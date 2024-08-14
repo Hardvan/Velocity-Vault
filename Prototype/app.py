@@ -18,6 +18,7 @@ from CRUD_QR import add_qr_code, get_qr_code, update_qr_code, delete_qr_code
 from HuggingFace import sentiment_analysis, summarize_text
 from password_manager import hash_password, check_password
 import whatsapp_message
+from save_qr_image import save_qr_image
 
 # Load the environment variables
 import os
@@ -94,21 +95,6 @@ if TEST_CONNECTION:
     print("=== MongoDB Connection Test Completed ===")
 
 
-def save_qr_image(base64_img, image_path):
-    """Saves the base64 image to a file.
-
-    Args:
-        base64_img (str): The base64 image.
-        image_path (str): The path to save the image.
-    """
-
-    # Convert the base64 image to bytes
-    img_bytes = base64.b64decode(base64_img)
-
-    # Save the image to a file
-    with open(image_path, "wb") as img_file:
-        img_file.write(img_bytes)
-    print(f"✅ Saved the QR code to: {image_path}")
 
 
 if TEST_CRUD_QR_CODE:
