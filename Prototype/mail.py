@@ -26,7 +26,7 @@ email_from = "spyeyemusk42@gmail.com"
 
 # Define the password (better to reference externally)
 # As shown in the video this password is now dead, left in as example only
-pswd = "yhxu glqz arlk ohng"
+pswd = "ovwx ybbp qdcw ytlf"
 
 
 def is_valid_url(url):
