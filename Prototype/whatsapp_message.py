@@ -3,7 +3,7 @@ import requests
 import json
 
 # ! Refreshes every 24 hours
-bearer_token = "EABU7YlckmlkBO5jOEZBfBDcMrrQ2YgrPVhtkwiRQz0naxiTWaNP8DyL2bb3ug9Re9R4f9jjSDB9lUZCZBD6KyAD9CFSyOBNKw3nDHUB8eOgA0ojKxDZARi6cR5dHXC5ntgZCmPLgTozvB0a8UoWucmZBN2KbNKBMKaBbz1ZCYBKw1grzVex6AtAiBuXa9oKmCs93yeBlAqzZA7wZBMiZBulFo0tbmgBij56MZAeN3AZD"
+bearer_token = "EABU7YlckmlkBO7hIYVwYaLQHNFCG1pdZAlXZCHCmJZCsrt01YfIhw9j2PEkUqyUcGxRs2BgFGZCSBs3SZC1hwCapVxCLwDsBohAEPpC2i6C07rCpMJba0YKpClq2bygG7YlC4UktcSMJgSvmiR2VFDZBHcOzNkFDOWA8WkZBz0rnZAkAPJ3uszxcZCxjIP01ZBBbxTUUNtDbZAk3VPDWyZB5MbdZAEsAKCluuCl9FvgUZD"
 
 
 def SendMessage(text, refreshed=False):
@@ -73,11 +73,11 @@ if __name__ == "__main__":
     def test_whatsapp():
 
         # ! Set to True if you want to send a template message after refreshing the token
-        send_template = False
+        send_template = True
         if send_template:
             print("Sending template message...")
             SendMessage("", refreshed=True)
-            print("Template message sent.\n")
+            print("✅ Template message sent.\n")
             # Ask user if he received the message
             input("Did you receive the template message? Press Enter to continue...")
             print()
