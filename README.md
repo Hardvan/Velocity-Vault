@@ -1,6 +1,6 @@
 # Next Gen Car Showroom Management System
 
-This repository contains the documents/source code associated with the Next Gen Car Showroom Management System project, developed as part of the DBMS Lab Experiential Learning component.
+This repository contains the documents/source code associated with the Next Gen Car Showroom Management System project.
 
 ## Demonstration Video
 
